@@ -14,16 +14,23 @@ namespace EF
     {
         private readonly ApplicationDbContext _context;
 
-        public IBaseRepository<Company> Companies { get; private set; }
-        //public IRecetasRepository Recetas { get; private set; }
-
-        public UnitOfWork(ApplicationDbContext context)
+        public UnitOfWork(ApplicationDbContext context,
+                          IBaseRepository<Company> companies,
+                          IBaseRepository<User> users,
+                          IBaseRepository<UserCompany> usersCompanies,
+                          ILastIdRepository lastIds)
         {
             _context = context;
-
-            Companies = new BaseRepository<Company>(_context);
-            //Recetas = new RecetasRepository(_context);
+            Companies = companies;
+            Users = users;
+            UsersCompanies = usersCompanies;
+            LastIds = lastIds;
         }
+
+        public IBaseRepository<Company> Companies { get; private set; }
+        public IBaseRepository<User> Users { get; private set; }
+        public IBaseRepository<UserCompany> UsersCompanies { get; private set; }
+        public ILastIdRepository LastIds { get; private set; }
 
         public int Complete()
         {
@@ -35,4 +42,5 @@ namespace EF
             _context.Dispose();
         }
     }
+
 }

@@ -21,8 +21,12 @@ C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\n
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Microsoft.OpenApi.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\System.Drawing.Common.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
@@ -52,6 +56,7 @@ C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\n
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.AssemblyInfoInputs.cache
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.AssemblyInfo.cs
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.csproj.CoreCompileInputs.cache
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\staticwebassets.development.json

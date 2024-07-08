@@ -3,32 +3,26 @@
   "WorkspaceRootPath": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\KontrolarCloud\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{76ABA5FE-6FEB-40E2-BC60-ECE31966F1D0}|..\\EF\\EF.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\ef\\repositories\\baserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DC07AC64-B07B-42BD-A07F-8388BA976196}|..\\Core\\Core.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\core\\models\\lastid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D9A44D0-F83B-4654-A803-F3B084BAF064}|KontrolarCloud.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\kontrolarcloud\\controllers\\lastidcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D9A44D0-F83B-4654-A803-F3B084BAF064}|KontrolarCloud.csproj|solutionrelative:controllers\\lastidcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{76ABA5FE-6FEB-40E2-BC60-ECE31966F1D0}|..\\EF\\EF.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\ef\\unitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D9A44D0-F83B-4654-A803-F3B084BAF064}|KontrolarCloud.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\kontrolarcloud\\controllers\\companycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D9A44D0-F83B-4654-A803-F3B084BAF064}|KontrolarCloud.csproj|solutionrelative:controllers\\companycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{76ABA5FE-6FEB-40E2-BC60-ECE31966F1D0}|..\\EF\\EF.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\ef\\repositories\\lastidrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC07AC64-B07B-42BD-A07F-8388BA976196}|..\\Core\\Core.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\core\\interfaces\\ilastidrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76ABA5FE-6FEB-40E2-BC60-ECE31966F1D0}|..\\EF\\EF.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\ef\\repositories\\baserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DC07AC64-B07B-42BD-A07F-8388BA976196}|..\\Core\\Core.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\core\\iunitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76ABA5FE-6FEB-40E2-BC60-ECE31966F1D0}|..\\EF\\EF.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\ef\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76ABA5FE-6FEB-40E2-BC60-ECE31966F1D0}|..\\EF\\EF.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\ef\\repositories\\companyrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DC07AC64-B07B-42BD-A07F-8388BA976196}|..\\Core\\Core.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\core\\interfaces\\icompanyrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DC07AC64-B07B-42BD-A07F-8388BA976196}|..\\Core\\Core.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\core\\models\\company.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DC07AC64-B07B-42BD-A07F-8388BA976196}|..\\Core\\Core.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\core\\interfaces\\ibaserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,7 +32,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -47,111 +41,93 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "CompanyController.cs",
-              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\KontrolarCloud\\Controllers\\CompanyController.cs",
-              "RelativeDocumentMoniker": "Controllers\\CompanyController.cs",
-              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\KontrolarCloud\\Controllers\\CompanyController.cs",
-              "RelativeToolTip": "Controllers\\CompanyController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T17:44:30.315Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CompanyRepository.cs",
-              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\CompanyRepository.cs",
-              "RelativeDocumentMoniker": "..\\EF\\Repositories\\CompanyRepository.cs",
-              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\CompanyRepository.cs",
-              "RelativeToolTip": "..\\EF\\Repositories\\CompanyRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAlAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T17:26:44.777Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ICompanyRepository.cs",
-              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Interfaces\\ICompanyRepository.cs",
-              "RelativeDocumentMoniker": "..\\Core\\Interfaces\\ICompanyRepository.cs",
-              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Interfaces\\ICompanyRepository.cs",
-              "RelativeToolTip": "..\\Core\\Interfaces\\ICompanyRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T17:20:15.045Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Company.cs",
-              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Models\\Company.cs",
-              "RelativeDocumentMoniker": "..\\Core\\Models\\Company.cs",
-              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Models\\Company.cs",
-              "RelativeToolTip": "..\\Core\\Models\\Company.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T17:08:30.45Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\ApplicationDbContext.cs",
-              "RelativeDocumentMoniker": "..\\EF\\ApplicationDbContext.cs",
-              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\ApplicationDbContext.cs",
-              "RelativeToolTip": "..\\EF\\ApplicationDbContext.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T05:29:51.771Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "BaseRepository.cs",
-              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\BaseRepository.cs",
-              "RelativeDocumentMoniker": "..\\EF\\Repositories\\BaseRepository.cs",
-              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\BaseRepository.cs",
-              "RelativeToolTip": "..\\EF\\Repositories\\BaseRepository.cs",
-              "ViewState": "AQIAAEsAAAAAAAAAAAAowF0AAAAzAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T05:29:07.951Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "IBaseRepository.cs",
-              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Interfaces\\IBaseRepository.cs",
-              "RelativeDocumentMoniker": "..\\Core\\Interfaces\\IBaseRepository.cs",
-              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Interfaces\\IBaseRepository.cs",
-              "RelativeToolTip": "..\\Core\\Interfaces\\IBaseRepository.cs",
-              "ViewState": "AQIAAAEAAAAAAAAAAABBwBQAAABdAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T05:15:39.612Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "UnitOfWork.cs",
               "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\UnitOfWork.cs",
               "RelativeDocumentMoniker": "..\\EF\\UnitOfWork.cs",
               "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\UnitOfWork.cs",
               "RelativeToolTip": "..\\EF\\UnitOfWork.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAcwB8AAAAAAAAA",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T05:12:45.23Z"
+              "WhenOpened": "2024-07-08T22:15:56.221Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "LastIdRepository.cs",
+              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\LastIdRepository.cs",
+              "RelativeDocumentMoniker": "..\\EF\\Repositories\\LastIdRepository.cs",
+              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\LastIdRepository.cs",
+              "RelativeToolTip": "..\\EF\\Repositories\\LastIdRepository.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAAABwAAABCAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-08T22:15:37.687Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "BaseRepository.cs",
+              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\BaseRepository.cs",
+              "RelativeDocumentMoniker": "..\\EF\\Repositories\\BaseRepository.cs",
+              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\BaseRepository.cs",
+              "RelativeToolTip": "..\\EF\\Repositories\\BaseRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-08T22:15:32.46Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "IUnitOfWork.cs",
               "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\IUnitOfWork.cs",
               "RelativeDocumentMoniker": "..\\Core\\IUnitOfWork.cs",
               "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\IUnitOfWork.cs",
               "RelativeToolTip": "..\\Core\\IUnitOfWork.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAwAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-06T05:12:20.386Z"
+              "WhenOpened": "2024-07-08T22:15:21.451Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ILastIdRepository.cs",
+              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Interfaces\\ILastIdRepository.cs",
+              "RelativeDocumentMoniker": "..\\Core\\Interfaces\\ILastIdRepository.cs",
+              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Interfaces\\ILastIdRepository.cs",
+              "RelativeToolTip": "..\\Core\\Interfaces\\ILastIdRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAA2AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-08T22:14:18.143Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "LastIdController.cs",
+              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\KontrolarCloud\\Controllers\\LastIdController.cs",
+              "RelativeDocumentMoniker": "Controllers\\LastIdController.cs",
+              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\KontrolarCloud\\Controllers\\LastIdController.cs",
+              "RelativeToolTip": "Controllers\\LastIdController.cs",
+              "ViewState": "AQIAACcAAAAAAAAAAAAAACsAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-08T22:11:28.644Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LastId.cs",
+              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Models\\LastId.cs",
+              "RelativeDocumentMoniker": "..\\Core\\Models\\LastId.cs",
+              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\Models\\LastId.cs",
+              "RelativeToolTip": "..\\Core\\Models\\LastId.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-08T22:01:51.291Z",
+              "EditorCaption": ""
             }
           ]
         }

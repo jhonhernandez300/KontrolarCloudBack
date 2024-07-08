@@ -16,5 +16,8 @@ namespace EF
         }
 
         public DbSet<Company> Companies { get; set; }
+        public DbSet<LastId> LastIds { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserCompany> UsersCompanies { get; set; }
     }
 }

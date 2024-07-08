@@ -11,7 +11,9 @@ namespace Core
     public interface IUnitOfWork : IDisposable
     {
         IBaseRepository<Company> Companies { get; }
-        //ICompaniessRepository Recetas { get; }
+        IBaseRepository<User> Users { get; }
+        IBaseRepository<UserCompany> UsersCompanies { get; }
+        ILastIdRepository LastIds { get; }
 
         int Complete();
     }
