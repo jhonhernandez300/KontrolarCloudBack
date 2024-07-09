@@ -15,9 +15,9 @@ namespace EF
         private readonly ApplicationDbContext _context;
 
         public UnitOfWork(ApplicationDbContext context,
-                          IBaseRepository<Company> companies,
+                          //IBaseRepository<Company> companies,
+                          ICompanyRepository companies,
                           IBaseRepository<User> users,
-                          //IBaseRepository<UserCompany> usersCompanies,
                           IUserCompanyRepository usersCompanies,
                           ILastIdRepository lastIds)
         {
@@ -28,9 +28,9 @@ namespace EF
             LastIds = lastIds;
         }
 
-        public IBaseRepository<Company> Companies { get; private set; }
-        public IBaseRepository<User> Users { get; private set; }
-        //public IBaseRepository<UserCompany> UsersCompanies { get; private set; }
+        //public IBaseRepository<Company> Companies { get; private set; }
+        public ICompanyRepository Companies { get; private set; }
+        public IBaseRepository<User> Users { get; private set; }        
         public IUserCompanyRepository UsersCompanies { get; private set; }
         public ILastIdRepository LastIds { get; private set; }
 

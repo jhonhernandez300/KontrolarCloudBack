@@ -1,0 +1,255 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\colortbl ;\red0\green0\blue0;}
+{\*\generator Riched20 10.0.22621}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\qc\f0\fs36\lang10 Dudas y Errores de KONTROLAR CONTROL CLOUD\fs22\par
+
+\pard\sl240\slmult1\par
+///////////////////////////////////\par
+\par
+\b A veces es necesario para que EF sepa como son las relaciones\b0\par
+\cf1\fs19 protected override void OnModelCreating(ModelBuilder modelBuilder)\par
+\{\par
+    modelBuilder.Entity<UserCompany>()\par
+        .HasOne(uc => uc.User)\par
+        .WithMany(u => u.UserCompanies)\par
+        .HasForeignKey(uc => uc.IdUser);\par
+\par
+    modelBuilder.Entity<UserCompany>()\par
+        .HasOne(uc => uc.Company)\par
+        .WithMany(c => c.UserCompanies)\par
+        .HasForeignKey(uc => uc.IdCompany);\par
+\par
+    base.OnModelCreating(modelBuilder);\par
+\}\par
+\par
+\lang9226 /////////////////////////////\par
+\par
+\b Agregar un registro usando la tabla que guarda el \'faltimo id\par
+\b0 [HttpPost("Add")]\par
+public IActionResult Add([FromBody] User user)\par
+\{\par
+    try\par
+    \{\par
+        if (user == null)\par
+        \{\par
+            return BadRequest(Json("Datos inv\'e1lidos del user"));\par
+        \}\par
+\par
+        // Consultar el \'faltimo ID usado para la tabla User\par
+        var lastIdRecord = _unitOfWork.LastIds.GetBigger("MT_Users");\par
+\par
+        if (lastIdRecord == null)\par
+        \{\par
+            return StatusCode(500, Json("No se encontr\'f3 un registro de Last (id) para la tabla User"));\par
+        \}\par
+\par
+        int newUserId = lastIdRecord.Last + 1;\par
+        user.IdUser = newUserId;\par
+\par
+        var nuevoUser = _unitOfWork.Users.Add(user);\par
+        _unitOfWork.Complete();\par
+\par
+        // Actualizar el modelo LastId con el nuevo ID\par
+        lastIdRecord.Last = newUserId;\par
+        _unitOfWork.LastIds.Update(lastIdRecord);\par
+        _unitOfWork.Complete();\par
+\par
+        return Ok(Json(nuevoUser));\par
+    \}\par
+    catch (Exception ex)\par
+    \{\par
+        return StatusCode(500, Json($"Error interno del servidor: \{ex.Message\}"));\par
+  \}\par
+\}           \par
+\par
+/////////////////////////////\par
+\par
+\b Al preguntarle a ChatGPT \b0 incluir Program.cs para que mire la inyecci\'f3n de dependencias\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\cf0\b\fs22\lang10 C\'f3mo crear un acci\'f3n en el controlador que use un SP\par
+\cf1\b0\fs19 public interface ICompanyRepository : IBaseRepository<Company>\par
+\{\par
+    Task<List<Company>> GetCompaniesByDocumentNumber(string documentNumber);\par
+\}\par
+\par
+ public interface IUnitOfWork : IDisposable\par
+ \{\par
+     //IBaseRepository<Company> Companies \{ get; \}\par
+     ICompanyRepository Companies \{ get; \}\par
+     IBaseRepository<User> Users \{ get; \}\par
+        \par
+     IUserCompanyRepository UsersCompanies \{ get; \}\par
+     ILastIdRepository LastIds \{ get; \}\par
+\par
+     int Complete();\par
+ \}\par
+\par
+public class CompanyRepository : BaseRepository<Company>, ICompanyRepository\par
+\{\par
+    private readonly ApplicationDbContext _context;\par
+\par
+    public CompanyRepository(ApplicationDbContext context) : base(context)\par
+    \{\par
+        _context = context;\par
+    \}\par
+\par
+    //Este m\'e9todo es distinto por que usa un SP en lugar de EF\par
+    public async Task<List<Company>> GetCompaniesByDocumentNumber(string documentNumber)\par
+    \{\par
+        var companies = new List<Company>();\par
+\par
+        var conn = _context.Database.GetDbConnection();\par
+        try\par
+        \{\par
+            await conn.OpenAsync();\par
+\par
+            using (var command = conn.CreateCommand())\par
+            \{\par
+                command.CommandText = "GetCompaniesByDocumentNumber";\par
+                command.CommandType = CommandType.StoredProcedure;\par
+\par
+                var param = command.CreateParameter();\par
+                param.ParameterName = "@DocumentNumber";\par
+                param.Value = documentNumber;\par
+                command.Parameters.Add(param);\par
+\par
+                using (var reader = await command.ExecuteReaderAsync())\par
+                \{\par
+                    while (await reader.ReadAsync())\par
+                    \{\par
+                        companies.Add(new Company\par
+                        \{\par
+                            IdCompany = reader.GetInt32(0),\par
+                            CompanyName = reader.GetString(1),\par
+                            DB = reader.GetString(2),\par
+                            UserName = reader.GetString(3),\par
+                            CompanyPassword = reader.GetString(4),\par
+                            LicenseValidDate = reader.GetDateTime(5),\par
+                            ConectionsSimultaneousNumber = reader.GetInt32(6)\par
+                        \});\par
+                    \}\par
+                \}\par
+            \}\par
+        \}\par
+        finally\par
+        \{\par
+            await conn.CloseAsync();\par
+        \}\par
+\par
+        return companies;\par
+    \}\par
+\}\par
+\par
+public class UnitOfWork : IUnitOfWork\par
+\{\par
+    private readonly ApplicationDbContext _context;\par
+\par
+    public UnitOfWork(ApplicationDbContext context,\par
+                      //IBaseRepository<Company> companies,\par
+                      ICompanyRepository companies,\par
+                      IBaseRepository<User> users,\par
+                      IUserCompanyRepository usersCompanies,\par
+                      ILastIdRepository lastIds)\par
+    \{\par
+        _context = context;\par
+        Companies = companies;\par
+        Users = users;\par
+        UsersCompanies = usersCompanies;\par
+        LastIds = lastIds;\par
+    \}\par
+\par
+    //public IBaseRepository<Company> Companies \{ get; private set; \}\par
+    public ICompanyRepository Companies \{ get; private set; \}\par
+    public IBaseRepository<User> Users \{ get; private set; \}        \par
+    public IUserCompanyRepository UsersCompanies \{ get; private set; \}\par
+    public ILastIdRepository LastIds \{ get; private set; \}\par
+\par
+    public int Complete()\par
+    \{\par
+        return _context.SaveChanges();\par
+    \}\par
+\par
+    public void Dispose()\par
+    \{\par
+        _context.Dispose();\par
+    \}\par
+\}\par
+\par
+[HttpGet("GetCompaniesByDocumentNumber/\{documentNumber\}")]\par
+public async Task<IActionResult> GetCompaniesByDocumentNumber(string documentNumber)\par
+\{\par
+    try\par
+    \{\par
+        var companies = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);\par
+\par
+        if (companies == null || !companies.Any())\par
+        \{\par
+            return NotFound("No se encontraron compa\'f1\'edas para el n\'famero de documento proporcionado.");\par
+        \}\par
+\par
+        return Ok(companies);\par
+    \}\par
+    catch (Exception ex)\par
+    \{\par
+        return StatusCode(500, $"Error interno del servidor: \{ex.Message\}");\par
+    \}\par
+\}\par
+\par
+//builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();\par
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();\par
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();\par
+builder.Services.AddScoped<IBaseRepository<Company>, BaseRepository<Company>>();\par
+builder.Services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();\par
+//builder.Services.AddScoped<IBaseRepository<UserCompany>, BaseRepository<UserCompany>>();\par
+builder.Services.AddScoped<IUserCompanyRepository, UserCompanyRepository>();\par
+builder.Services.AddScoped<ILastIdRepository, LastIdRepository>();\cf0\fs22\par
+\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+/////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\par
+/////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\par
+/////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\par
+/////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\cf0\fs22\lang10\par
+\cf1\fs19\lang9226 /////////////////////////////\par
+\par
+\par
+\cf0\fs22\lang10\par
+}
+ 

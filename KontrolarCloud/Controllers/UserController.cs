@@ -17,6 +17,26 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [HttpGet("GetCompaniesByDocumentNumber/{documentNumber}")]
+        public async Task<IActionResult> GetCompaniesByDocumentNumber(string documentNumber)
+        {
+            try
+            {
+                var companies = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);
+
+                if (companies == null || !companies.Any())
+                {
+                    return NotFound("No se encontraron compañías para el número de documento proporcionado.");
+                }
+
+                return Ok(companies);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
         [HttpDelete("Delete/{id}")]
         public IActionResult Delete(int id)
         {

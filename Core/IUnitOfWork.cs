@@ -10,9 +10,10 @@ namespace Core
 {
     public interface IUnitOfWork : IDisposable
     {
-        IBaseRepository<Company> Companies { get; }
+        //IBaseRepository<Company> Companies { get; }
+        ICompanyRepository Companies { get; }
         IBaseRepository<User> Users { get; }
-        //IBaseRepository<UserCompany> UsersCompanies { get; }
+        
         IUserCompanyRepository UsersCompanies { get; }
         ILastIdRepository LastIds { get; }
 
