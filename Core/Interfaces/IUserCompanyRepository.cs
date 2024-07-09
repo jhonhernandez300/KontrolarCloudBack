@@ -9,5 +9,7 @@ namespace Core.Interfaces
 {
     public interface IUserCompanyRepository : IBaseRepository<UserCompany>
     {
+        Task<List<User>> GetByCompanyId(int idCompany);
+        Task<List<Company>> GetByUserId(int idUser);        
     }
 }

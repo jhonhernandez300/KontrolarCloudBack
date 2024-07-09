@@ -113,16 +113,38 @@ namespace KontrolarCloud.Controllers
             {
                 if (company == null)
                 {
-                    return BadRequest(Json("Datos inválidos de la company"));
+                    return BadRequest("Datos inválidos de la company");
                 }
 
+                // Obtener el último ID usado para la tabla 'Company'
+                var lastIdRecord = _unitOfWork.LastIds.GetBigger("MT_Companies");
+                                                    
+
+                if (lastIdRecord == null)
+                {
+                    return NotFound("No se encontró ningún registro de LastIds para la tabla 'Company'.");
+                }
+
+                // Generar el nuevo ID
+                int newId = lastIdRecord.Last + 1;
+
+                // Asignar el nuevo ID a la entidad Company
+                company.IdCompany = newId;
+
+                // Guardar la nueva entidad Company
                 var nuevaCompany = _unitOfWork.Companies.Add(company);
                 _unitOfWork.Complete();
-                return Ok(Json(nuevaCompany));
+
+                // Actualizar el registro en LastIds con el nuevo ID
+                lastIdRecord.Last = newId;
+                _unitOfWork.LastIds.Update(lastIdRecord);
+                _unitOfWork.Complete();
+
+                return Ok(nuevaCompany);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
     }

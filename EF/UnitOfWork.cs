@@ -17,7 +17,8 @@ namespace EF
         public UnitOfWork(ApplicationDbContext context,
                           IBaseRepository<Company> companies,
                           IBaseRepository<User> users,
-                          IBaseRepository<UserCompany> usersCompanies,
+                          //IBaseRepository<UserCompany> usersCompanies,
+                          IUserCompanyRepository usersCompanies,
                           ILastIdRepository lastIds)
         {
             _context = context;
@@ -29,7 +30,8 @@ namespace EF
 
         public IBaseRepository<Company> Companies { get; private set; }
         public IBaseRepository<User> Users { get; private set; }
-        public IBaseRepository<UserCompany> UsersCompanies { get; private set; }
+        //public IBaseRepository<UserCompany> UsersCompanies { get; private set; }
+        public IUserCompanyRepository UsersCompanies { get; private set; }
         public ILastIdRepository LastIds { get; private set; }
 
         public int Complete()

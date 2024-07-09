@@ -35,7 +35,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBaseRepository<Company>, BaseRepository<Company>>();
 builder.Services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
-builder.Services.AddScoped<IBaseRepository<UserCompany>, BaseRepository<UserCompany>>();
+//builder.Services.AddScoped<IBaseRepository<UserCompany>, BaseRepository<UserCompany>>();
+builder.Services.AddScoped<IUserCompanyRepository, UserCompanyRepository>();
 builder.Services.AddScoped<ILastIdRepository, LastIdRepository>();
 
 builder.Services.AddSwaggerGen(c =>

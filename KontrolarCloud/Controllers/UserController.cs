@@ -104,42 +104,42 @@ namespace KontrolarCloud.Controllers
             }
         }
 
-        //[HttpPost("Add")]
-        //public IActionResult Add([FromBody] User user)
-        //{
-        //    try
-        //    {
-        //        if (user == null)
-        //        {
-        //            return BadRequest(Json("Datos inválidos del user"));
-        //        }
+        [HttpPost("Add")]
+        public IActionResult Add([FromBody] User user)
+        {
+            try
+            {
+                if (user == null)
+                {
+                    return BadRequest(Json("Datos inválidos del user"));
+                }
 
-        //        // Consultar el último ID usado para la tabla User
-        //        var lastIdRecord = _unitOfWork.LastIds.SingleOrDefault(li => li.TableName == "User");
+                // Consultar el último ID usado para la tabla User
+                var lastIdRecord = _unitOfWork.LastIds.GetBigger("MT_Users");
 
-        //        if (lastIdRecord == null)
-        //        {
-        //            return StatusCode(500, Json("No se encontró un registro de LastId para la tabla User"));
-        //        }
+                if (lastIdRecord == null)
+                {
+                    return StatusCode(500, Json("No se encontró un registro de Last (id) para la tabla User"));
+                }
 
-        //        int newUserId = lastIdRecord.Last + 1;                
-        //        user.Id = newUserId;
-                
-        //        var nuevoUser = _unitOfWork.Users.Add(user);
-        //        _unitOfWork.Complete();
+                int newUserId = lastIdRecord.Last + 1;
+                user.IdUser = newUserId;
 
-        //        // Actualizar el modelo LastId con el nuevo ID
-        //        lastIdRecord.Last = newUserId;
-        //        _unitOfWork.LastIds.Update(lastIdRecord);
-        //        _unitOfWork.Complete();
+                var nuevoUser = _unitOfWork.Users.Add(user);
+                _unitOfWork.Complete();
 
-        //        return Ok(Json(nuevoUser));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
-        //    }
-        //}
+                // Actualizar el modelo LastId con el nuevo ID
+                lastIdRecord.Last = newUserId;
+                _unitOfWork.LastIds.Update(lastIdRecord);
+                _unitOfWork.Complete();
+
+                return Ok(Json(nuevoUser));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
+            }
+        }
 
 
     }

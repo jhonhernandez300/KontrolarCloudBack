@@ -12,7 +12,8 @@ namespace Core
     {
         IBaseRepository<Company> Companies { get; }
         IBaseRepository<User> Users { get; }
-        IBaseRepository<UserCompany> UsersCompanies { get; }
+        //IBaseRepository<UserCompany> UsersCompanies { get; }
+        IUserCompanyRepository UsersCompanies { get; }
         ILastIdRepository LastIds { get; }
 
         int Complete();

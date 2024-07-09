@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.Models
 {
-    [Table("MT_UserCompanies")]
+    [Table("MT_UsersCompanies")]
     public class UserCompany
     {
         [Key]
@@ -16,7 +16,7 @@ namespace Core.Models
         public required int IdUser { get; set; }
         public required int IdCompany { get; set; }
 
-        public User User { get; set; }
-        public Company Company { get; set; }
+        public User? User { get; set; }
+        public Company? Company { get; set; }
     }
 }

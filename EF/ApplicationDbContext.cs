@@ -19,5 +19,20 @@ namespace EF
         public DbSet<LastId> LastIds { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserCompany> UsersCompanies { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserCompany>()
+                .HasOne(uc => uc.User)
+                .WithMany(u => u.UserCompanies)
+                .HasForeignKey(uc => uc.IdUser);
+
+            modelBuilder.Entity<UserCompany>()
+                .HasOne(uc => uc.Company)
+                .WithMany(c => c.UserCompanies)
+                .HasForeignKey(uc => uc.IdCompany);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
