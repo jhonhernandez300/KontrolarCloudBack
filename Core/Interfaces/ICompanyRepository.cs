@@ -9,6 +9,6 @@ namespace Core.Interfaces
 {
     public interface ICompanyRepository : IBaseRepository<Company>
     {
-        Task<List<Company>> GetCompaniesByDocumentNumber(string documentNumber);
+        Task<(List<Company> companies, bool userNotFound)> GetCompaniesByDocumentNumber(string documentNumber);
     }
 }

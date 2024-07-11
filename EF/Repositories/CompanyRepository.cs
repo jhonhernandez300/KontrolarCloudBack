@@ -20,9 +20,10 @@ namespace EF.Repositories
         }
 
         //Este método es distinto por que usa un SP en lugar de EF
-        public async Task<List<Company>> GetCompaniesByDocumentNumber(string documentNumber)
+        public async Task<(List<Company> companies, bool userNotFound)> GetCompaniesByDocumentNumber(string documentNumber)
         {
             var companies = new List<Company>();
+            bool userNotFound = false;
 
             var conn = _context.Database.GetDbConnection();
             try
@@ -39,6 +40,12 @@ namespace EF.Repositories
                     param.ParameterName = "@DocumentNumber";
                     param.Value = documentNumber;
                     command.Parameters.Add(param);
+
+                    var userNotFoundParam = command.CreateParameter();
+                    userNotFoundParam.ParameterName = "@UserNotFound";
+                    userNotFoundParam.DbType = DbType.Boolean;
+                    userNotFoundParam.Direction = ParameterDirection.Output;
+                    command.Parameters.Add(userNotFoundParam);
 
                     Console.WriteLine($"Executing stored procedure with DocumentNumber: {documentNumber}");
 
@@ -58,6 +65,8 @@ namespace EF.Repositories
                             });
                         }
                     }
+
+                    userNotFound = (bool)userNotFoundParam.Value;
                 }
 
                 Console.WriteLine("Stored procedure executed successfully.");
@@ -73,8 +82,9 @@ namespace EF.Repositories
                 Console.WriteLine("Database connection closed.");
             }
 
-            return companies;
+            return (companies, userNotFound);
         }
+
 
     }
 }

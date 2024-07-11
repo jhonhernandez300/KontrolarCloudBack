@@ -36,11 +36,11 @@ namespace KontrolarCloud.Controllers
                     return BadRequest("La cadena proporcionada no es una cadena Base64 válida.");
                 }
 
-                var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);   
-                documentNumber = StringHelper.EliminateFirstAndLast(documentNumber); 
-                var companies = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);
+                var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);
+                documentNumber = StringHelper.EliminateFirstAndLast(documentNumber);
+                var (companies, userNotFound) = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);
 
-                if (companies == null || !companies.Any())
+                if (userNotFound)
                 {
                     return NotFound("No se encontraron compañías para el número de documento proporcionado.");
                 }

@@ -313,7 +313,162 @@ public async Task<IActionResult> GetCompaniesByDocumentNumber(string encryptedDo
 \f1\par
 \f2 ////////////////////\par
 \par
-\f0\par
+\b\f0 Como adicionar un par\'e1metro de salida\par
+\b0 En la bd\par
+ALTER PROCEDURE GetCompaniesByDocumentNumber\par
+    @DocumentNumber NVARCHAR(100),\par
+    @UserNotFound BIT OUTPUT\par
+AS\par
+BEGIN\par
+    SET @UserNotFound = 0;\par
+\par
+    BEGIN TRY        \par
+        DECLARE @IdUser INT;\par
+\par
+        -- Validar si el DocumentNumber existe\par
+        SELECT @IdUser = IdUser \par
+        FROM dbo.MT_Users \par
+        WHERE DocumentNumber = @DocumentNumber;\par
+        \par
+        IF @IdUser IS NULL\par
+        BEGIN\par
+            SET @UserNotFound = 1;\par
+            RETURN;\par
+        END\par
+\par
+        -- Si existe, seleccionar las compa\'f1\'edas relacionadas\par
+        SELECT c.IdCompany, \par
+               c.CompanyName, \par
+               c.DB, \par
+               c.UserName, \par
+               c.CompanyPassword, \par
+               c.LicenseValidDate, \par
+               c.ConnectionsSimultaneousNumber\par
+        FROM dbo.MT_Companies c\par
+        INNER JOIN dbo.MT_UsersCompanies uc ON c.IdCompany = uc.IdCompany\par
+        WHERE uc.IdUser = @IdUser;\par
+    END TRY\par
+    BEGIN CATCH\par
+        -- Manejo de excepciones\par
+        DECLARE @ErrorMessage NVARCHAR(4000);\par
+        DECLARE @ErrorSeverity INT;\par
+        DECLARE @ErrorState INT;\par
+\par
+        SELECT \par
+            @ErrorMessage = ERROR_MESSAGE(),\par
+            @ErrorSeverity = ERROR_SEVERITY(),\par
+            @ErrorState = ERROR_STATE();\par
+\par
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);\par
+    END CATCH\par
+END;\par
+\par
+En CompanyRepository:\par
+public async Task<(List<Company> companies, bool userNotFound)> GetCompaniesByDocumentNumber(string documentNumber)\par
+\{\par
+    var companies = new List<Company>();\par
+    bool userNotFound = false;\par
+\par
+    var conn = _context.Database.GetDbConnection();\par
+    try\par
+    \{\par
+        await conn.OpenAsync();\par
+        Console.WriteLine("Database connection opened.");\par
+\par
+        using (var command = conn.CreateCommand())\par
+        \{\par
+            command.CommandText = "GetCompaniesByDocumentNumber";\par
+            command.CommandType = CommandType.StoredProcedure;\par
+\par
+            var param = command.CreateParameter();\par
+            param.ParameterName = "@DocumentNumber";\par
+            param.Value = documentNumber;\par
+            command.Parameters.Add(param);\par
+\par
+            var userNotFoundParam = command.CreateParameter();\par
+            userNotFoundParam.ParameterName = "@UserNotFound";\par
+            userNotFoundParam.DbType = DbType.Boolean;\par
+            userNotFoundParam.Direction = ParameterDirection.Output;\par
+            command.Parameters.Add(userNotFoundParam);\par
+\par
+            Console.WriteLine($"Executing stored procedure with DocumentNumber: \{documentNumber\}");\par
+\par
+            using (var reader = await command.ExecuteReaderAsync())\par
+            \{\par
+                while (await reader.ReadAsync())\par
+                \{\par
+                    companies.Add(new Company\par
+                    \{\par
+                        IdCompany = reader.GetInt32(0),\par
+                        CompanyName = reader.GetString(1),\par
+                        DB = reader.GetString(2),\par
+                        UserName = reader.GetString(3),\par
+                        CompanyPassword = reader.GetString(4),\par
+                        LicenseValidDate = reader.GetDateTime(5),\par
+                        ConnectionsSimultaneousNumber = reader.GetInt32(6)\par
+                    \});\par
+                \}\par
+            \}\par
+\par
+            userNotFound = (bool)userNotFoundParam.Value;\par
+        \}\par
+\par
+        Console.WriteLine("Stored procedure executed successfully.");\par
+    \}\par
+    catch (Exception ex)\par
+    \{\par
+        Console.WriteLine($"Error executing stored procedure: \{ex.Message\}");\par
+        throw;\par
+    \}\par
+    finally\par
+    \{\par
+        await conn.CloseAsync();\par
+        Console.WriteLine("Database connection closed.");\par
+    \}\par
+\par
+    return (companies, userNotFound);\par
+\}\par
+\par
+En el controlador:\par
+[HttpGet("GetCompaniesByDocumentNumber/\{encryptedDocumentNumber\}")]\par
+public async Task<IActionResult> GetCompaniesByDocumentNumber(string encryptedDocumentNumber)\par
+\{\par
+    try\par
+    \{\par
+        encryptedDocumentNumber = Uri.UnescapeDataString(encryptedDocumentNumber);\par
+        // Verificar si encryptedDocumentNumber es una cadena Base64 v\'e1lida\par
+        byte[] encryptedBytes;\par
+        try\par
+        \{\par
+            encryptedBytes = Convert.FromBase64String(encryptedDocumentNumber);\par
+        \}\par
+        catch (FormatException)\par
+        \{\par
+            return BadRequest("La cadena proporcionada no es una cadena Base64 v\'e1lida.");\par
+        \}\par
+\par
+        var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);   \par
+        documentNumber = StringHelper.EliminateFirstAndLast(documentNumber); \par
+        var (companies, userNotFound) = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);\par
+\par
+        if (userNotFound)\par
+        \{\par
+            return NotFound("No se encontraron compa\'f1\'edas para el n\'famero de documento proporcionado.");\par
+        \}\par
+\par
+        var companiesJson = JsonConvert.SerializeObject(companies);\par
+        var encryptedData = CryptoHelper.Encrypt(companiesJson);\par
+\par
+        return Ok(encryptedData);\par
+    \}\par
+    catch (Exception ex)\par
+    \{\par
+        return StatusCode(500, $"Error interno del servidor: \{ex.Message\} - StackTrace: \{ex.StackTrace\}");\par
+    \}\par
+\}\par
+\par
+En ICompanyRepository\par
+ Task<(List<Company> companies, bool userNotFound)> GetCompaniesByDocumentNumber(string documentNumber);\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
