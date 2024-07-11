@@ -28,6 +28,7 @@ namespace EF.Repositories
             try
             {
                 await conn.OpenAsync();
+                Console.WriteLine("Database connection opened.");
 
                 using (var command = conn.CreateCommand())
                 {
@@ -38,6 +39,8 @@ namespace EF.Repositories
                     param.ParameterName = "@DocumentNumber";
                     param.Value = documentNumber;
                     command.Parameters.Add(param);
+
+                    Console.WriteLine($"Executing stored procedure with DocumentNumber: {documentNumber}");
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
@@ -51,18 +54,27 @@ namespace EF.Repositories
                                 UserName = reader.GetString(3),
                                 CompanyPassword = reader.GetString(4),
                                 LicenseValidDate = reader.GetDateTime(5),
-                                ConectionsSimultaneousNumber = reader.GetInt32(6)
+                                ConnectionsSimultaneousNumber = reader.GetInt32(6)
                             });
                         }
                     }
                 }
+
+                Console.WriteLine("Stored procedure executed successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing stored procedure: {ex.Message}");
+                throw;
             }
             finally
             {
                 await conn.CloseAsync();
+                Console.WriteLine("Database connection closed.");
             }
 
             return companies;
         }
+
     }
 }

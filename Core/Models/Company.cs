@@ -18,7 +18,7 @@ namespace Core.Models
         public required string UserName { get; set; }
         public required string CompanyPassword { get; set; }
         public required DateTime LicenseValidDate { get; set; }
-        public required int ConectionsSimultaneousNumber { get; set; }
+        public required int ConnectionsSimultaneousNumber { get; set; }
 
         public ICollection<UserCompany> UserCompanies { get; set; } = new List<UserCompany>();
     }

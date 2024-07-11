@@ -61,7 +61,7 @@ namespace KontrolarCloud.Controllers
                 existingCompany.UserName = updatedCompany.UserName;
                 existingCompany.CompanyPassword = updatedCompany.CompanyPassword;
                 existingCompany.LicenseValidDate = updatedCompany.LicenseValidDate;
-                existingCompany.ConectionsSimultaneousNumber = updatedCompany.ConectionsSimultaneousNumber;
+                existingCompany.ConnectionsSimultaneousNumber = updatedCompany.ConnectionsSimultaneousNumber;
 
                 _unitOfWork.Companies.Update(existingCompany);
                 _unitOfWork.Complete();

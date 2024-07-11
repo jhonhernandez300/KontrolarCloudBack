@@ -2,6 +2,8 @@
 using Core;
 using Core.Models;
 using Microsoft.AspNetCore.Cors;
+using Core.Utils;
+using Newtonsoft.Json;
 
 namespace KontrolarCloud.Controllers
 {
@@ -17,11 +19,25 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet("GetCompaniesByDocumentNumber/{documentNumber}")]
-        public async Task<IActionResult> GetCompaniesByDocumentNumber(string documentNumber)
+        [HttpGet("GetCompaniesByDocumentNumber/{encryptedDocumentNumber}")]
+        public async Task<IActionResult> GetCompaniesByDocumentNumber(string encryptedDocumentNumber)
         {
             try
             {
+                encryptedDocumentNumber = Uri.UnescapeDataString(encryptedDocumentNumber);
+                // Verificar si encryptedDocumentNumber es una cadena Base64 válida
+                byte[] encryptedBytes;
+                try
+                {
+                    encryptedBytes = Convert.FromBase64String(encryptedDocumentNumber);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest("La cadena proporcionada no es una cadena Base64 válida.");
+                }
+
+                var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);   
+                documentNumber = StringHelper.EliminateFirstAndLast(documentNumber); 
                 var companies = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);
 
                 if (companies == null || !companies.Any())
@@ -29,11 +45,14 @@ namespace KontrolarCloud.Controllers
                     return NotFound("No se encontraron compañías para el número de documento proporcionado.");
                 }
 
-                return Ok(companies);
+                var companiesJson = JsonConvert.SerializeObject(companies);
+                var encryptedData = CryptoHelper.Encrypt(companiesJson);
+
+                return Ok(encryptedData);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+                return StatusCode(500, $"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
             }
         }
 

@@ -1,4 +1,4 @@
-{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil Cascadia Mono;}{\f2\fnil\fcharset0 Cascadia Mono;}}
 {\colortbl ;\red0\green0\blue0;}
 {\*\generator Riched20 10.0.22621}\viewkind4\uc1 
 \pard\sa200\sl276\slmult1\qc\f0\fs36\lang10 Dudas y Errores de KONTROLAR CONTROL CLOUD\fs22\par
@@ -208,6 +208,112 @@ builder.Services.AddScoped<ILastIdRepository, LastIdRepository>();\cf0\fs22\par
 \par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
+\b Encriptar - desencriptar\b0\par
+\f1 using System.Security.Cryptography;\par
+\par
+namespace Core.Utils\par
+\{\par
+    public static class CryptoHelper\par
+    \{\par
+        private static readonly string Key = "1234567890123456"; // 16 bytes\par
+        private static readonly string Iv = "1234567890123456"; // 16 bytes\par
+\par
+        public static string Decrypt(string encryptedData)\par
+        \{\par
+            byte[] cipherBytes = Convert.FromBase64String(encryptedData);\par
+\par
+            using (Aes aesAlg = Aes.Create())\par
+            \{\par
+                aesAlg.Key = Encoding.UTF8.GetBytes(Key);\par
+                aesAlg.IV = Encoding.UTF8.GetBytes(Iv);\par
+                aesAlg.Mode = CipherMode.CBC;\par
+                aesAlg.Padding = PaddingMode.PKCS7;\par
+\par
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);\par
+\par
+                using (MemoryStream msDecrypt = new MemoryStream(cipherBytes))\par
+                \{\par
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))\par
+                    \{\par
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))\par
+                        \{\par
+                            return srDecrypt.ReadToEnd();\par
+                        \}\par
+                    \}\par
+                \}\par
+            \}\par
+        \}\par
+\par
+        public static string Encrypt(string plainText)\par
+        \{\par
+            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);\par
+\par
+            using (Aes aesAlg = Aes.Create())\par
+            \{\par
+                aesAlg.Key = Encoding.UTF8.GetBytes(Key);\par
+                aesAlg.IV = Encoding.UTF8.GetBytes(Iv);\par
+                aesAlg.Mode = CipherMode.CBC;\par
+                aesAlg.Padding = PaddingMode.PKCS7;\par
+\par
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);\par
+\par
+                using (MemoryStream msEncrypt = new MemoryStream())\par
+                \{\par
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))\par
+                    \{\par
+                        csEncrypt.Write(plainBytes, 0, plainBytes.Length);\par
+                        csEncrypt.FlushFinalBlock();\par
+                        return Convert.ToBase64String(msEncrypt.ToArray());\par
+                    \}\par
+                \}\par
+            \}\par
+        \}\par
+    \}\par
+\}\par
+\f0\par
+En la acci\'f3n del controlador:\par
+\f1 using Newtonsoft.Json;\f2  (Instalar el paq)\par
+\par
+\f1 [HttpGet("GetCompaniesByDocumentNumber/\{encryptedDocumentNumber\}")]\par
+public async Task<IActionResult> GetCompaniesByDocumentNumber(string encryptedDocumentNumber)\par
+\{\par
+    try\par
+    \{\par
+        encryptedDocumentNumber = Uri.UnescapeDataString(encryptedDocumentNumber);\par
+        // Verificar si encryptedDocumentNumber es una cadena Base64 v\f2\'e1lida\par
+        byte[] encryptedBytes;\par
+        try\par
+        \{\par
+            encryptedBytes = Convert.FromBase64String(encryptedDocumentNumber);\par
+        \}\par
+        catch (FormatException)\par
+        \{\par
+            return BadRequest("La cadena proporcionada no es una cadena Base64 v\'e1lida.");\par
+        \}\par
+\par
+        var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);   \par
+        documentNumber = StringHelper.EliminateFirstAndLast(documentNumber); \par
+        var companies = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);\par
+\par
+        if (companies == null || !companies.Any())\par
+        \{\par
+            return NotFound("No se encontraron compa\'f1\'edas para el n\'famero de documento proporcionado.");\par
+        \}\par
+\par
+        var companiesJson = JsonConvert.SerializeObject(companies);\par
+        var encryptedData = CryptoHelper.Encrypt(companiesJson);\par
+\par
+        return Ok(encryptedData);\par
+    \}\par
+    catch (Exception ex)\par
+    \{\par
+        return StatusCode(500, $"Error interno del servidor: \{ex.Message\} - StackTrace: \{ex.StackTrace\}");\par
+    \}\par
+\}\par
+\f1\par
+\f2 ////////////////////\par
+\par
+\f0\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
