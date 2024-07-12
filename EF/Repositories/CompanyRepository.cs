@@ -84,7 +84,5 @@ namespace EF.Repositories
 
             return (companies, userNotFound);
         }
-
-
     }
 }

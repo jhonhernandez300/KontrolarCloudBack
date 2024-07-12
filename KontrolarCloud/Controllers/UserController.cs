@@ -2,8 +2,16 @@
 using Core;
 using Core.Models;
 using Microsoft.AspNetCore.Cors;
-using Core.Utils;
+using EF.Utils;
 using Newtonsoft.Json;
+using EF.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace KontrolarCloud.Controllers
 {
@@ -13,10 +21,70 @@ namespace KontrolarCloud.Controllers
     public class UserController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        public IConfiguration _configuration;
 
-        public UserController(IUnitOfWork unitOfWork)
+        public UserController(IConfiguration configuration, IUnitOfWork unitOfWork)
         {
+            _configuration = configuration;
             _unitOfWork = unitOfWork;
+        }
+
+        [HttpGet]  
+        [Route("CreateToken/{encryptedDocumentNumber}/{encryptedCorreo}")]
+        //public dynamic CreateToken()
+        public dynamic CreateToken(string encryptedDocumentNumber, string encryptedIdUser)
+        {
+            var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);
+            documentNumber = StringHelper.EliminateFirstAndLast(documentNumber);
+
+            var idUser = CryptoHelper.Decrypt(encryptedIdUser.ToString());
+            idUser = StringHelper.EliminateFirstAndLast(idUser);
+            //var idUser = "1";
+            //var documentNumber = "1234567890";
+
+            try
+            {
+                var jwt = _configuration.GetSection("Jwt")
+                    .Get<Jwt>();
+
+                var claims = new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                    new Claim("id", idUser),
+                    new Claim("documentNumber", documentNumber)
+                };
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                var singIng = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(
+                        jwt.Issuer,
+                        jwt.Audience,
+                        claims,
+                        expires: DateTime.Now.AddMinutes(20),
+                        signingCredentials: singIng
+                );
+
+                var response = new JwtSecurityTokenHandler().WriteToken(token);
+
+                //var tokenJson = JsonConvert.SerializeObject(response);
+                var encryptedToken = CryptoHelper.Encrypt(response);
+
+                return new
+                {
+                    success = true,
+                    message = "exito",
+                    //result = new JwtSecurityTokenHandler().WriteToken(token)
+                    result = encryptedToken
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
         [HttpGet("GetCompaniesByDocumentNumber/{encryptedDocumentNumber}")]

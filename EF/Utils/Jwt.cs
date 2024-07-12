@@ -1,4 +1,10 @@
-﻿using System.Security.Claims;
+﻿using Core.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace EF.Models
 {
@@ -8,8 +14,8 @@ namespace EF.Models
         public required string Issuer { get; set; }
         public required string Audience { get; set; }
         public required string Subject { get; set; }
-
-        public static dynamic validarToken(ClaimsIdentity identity, ApplicationDbContext context)
+                
+        public static dynamic CheckToken(ClaimsIdentity identity, ApplicationDbContext context)
         {
             try
             {            
@@ -26,16 +32,15 @@ namespace EF.Models
                 var id = identity.Claims.FirstOrDefault(x => x.Type == "id").Value;
                 //Usuario usuario = Usuario.DB().FirstOrDefault(x => x.idUsuario == id);
 
-                Usuario usuario = context.Usuarios
-                    .Where(x => x.IdUsuario.ToString() == id)
+                User company = context.Users
+                    .Where(x => x.IdUser.ToString() == id)
                     .FirstOrDefault();
 
                 return new
                 {
                     success = true,
-                    message = "exito",
-                    //result = usuario
-                    result = usuario
+                    message = "exito",                    
+                    result = company
                 };
             }
             catch (Exception ex) 

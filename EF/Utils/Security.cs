@@ -32,7 +32,7 @@ namespace EF.Utils
             var identity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity; 
             // Accede a HttpContext a través del HttpContextAccessor
 
-            return Jwt.validarToken(identity, _context);
+            return Jwt.CheckToken(identity, _context);
         }
 
         //public string ObtenerRol(dynamic token)
