@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Core.Utils
+namespace EF.Utils
 {
     public static class CryptoHelper
     {

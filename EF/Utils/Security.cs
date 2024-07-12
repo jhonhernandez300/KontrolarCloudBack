@@ -12,8 +12,9 @@ using Microsoft.AspNetCore.Http;
 //using Fluent.Infrastructure.FluentModel;
 using Microsoft.AspNetCore.Http;
 using EF;
+using EF.Models;
 
-namespace Core.Utils
+namespace EF.Utils
 {
     public class Security
     {
