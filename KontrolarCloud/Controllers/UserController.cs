@@ -30,17 +30,26 @@ namespace KontrolarCloud.Controllers
         }
 
         [HttpGet]  
-        [Route("CreateToken/{encryptedDocumentNumber}/{encryptedCorreo}")]
+        [Route("CreateToken/{encryptedDocumentNumber}/{encryptedIdCompany}")]
         //public dynamic CreateToken()
-        public dynamic CreateToken(string encryptedDocumentNumber, string encryptedIdUser)
+        public dynamic CreateToken(string encryptedDocumentNumber, string encryptedIdCompany)
         {
+            //gKtp0IW7eKqn6T3ar5+HVw==
+            //var idCompany = "1";
+            var encriptedIdC = "m4R0rUAW4REnW0XPhHfDCw==";
+            //var documentNumber = "1234567890";
+
+            //var encriptedIdC = CryptoHelper.Encrypt(idCompany);
+            //idCompany = CryptoHelper.Decrypt(encriptedIdC);
+
+            //var encriptedNum = CryptoHelper.Encrypt(documentNumber);
+            //documentNumber = CryptoHelper.Decrypt(encriptedNum);
+
             var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);
             documentNumber = StringHelper.EliminateFirstAndLast(documentNumber);
 
-            var idUser = CryptoHelper.Decrypt(encryptedIdUser.ToString());
-            idUser = StringHelper.EliminateFirstAndLast(idUser);
-            //var idUser = "1";
-            //var documentNumber = "1234567890";
+            var idCompany = CryptoHelper.Decrypt(encryptedIdCompany);
+            idCompany = StringHelper.EliminateFirstAndLast(idCompany);
 
             try
             {
@@ -52,7 +61,7 @@ namespace KontrolarCloud.Controllers
                     new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim("id", idUser),
+                    new Claim("idCompany", idCompany),
                     new Claim("documentNumber", documentNumber)
                 };
 
@@ -69,17 +78,10 @@ namespace KontrolarCloud.Controllers
 
                 var response = new JwtSecurityTokenHandler().WriteToken(token);
 
-                //var tokenJson = JsonConvert.SerializeObject(response);
-                var encryptedToken = CryptoHelper.Encrypt(response);
+                var tokenJson = JsonConvert.SerializeObject(response);
+                var encryptedToken = CryptoHelper.Encrypt(tokenJson);
 
-                return new
-                {
-                    success = true,
-                    message = "exito",
-                    //result = new JwtSecurityTokenHandler().WriteToken(token)
-                    result = encryptedToken
-                };
-
+                return encryptedToken;
             }
             catch (Exception ex)
             {
