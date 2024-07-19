@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KontrolarCloud")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ccf1d72417d8befb98d957ca2ddc22ed2d5c88b6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e1ed3ac7e46aca14af7bdd2c649cb0b190c2a754")]
 [assembly: System.Reflection.AssemblyProductAttribute("KontrolarCloud")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KontrolarCloud")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

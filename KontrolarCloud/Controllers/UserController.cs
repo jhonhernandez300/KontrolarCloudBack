@@ -30,23 +30,12 @@ namespace KontrolarCloud.Controllers
         }
 
         [HttpGet]  
-        [Route("CreateToken/{encryptedDocumentNumber}/{encryptedIdCompany}")]
+        [Route("CreateToken/{encryptedIdentificationNumber}/{encryptedIdCompany}")]
         //public dynamic CreateToken()
-        public dynamic CreateToken(string encryptedDocumentNumber, string encryptedIdCompany)
+        public dynamic CreateToken(string encryptedIdentificationNumber, string encryptedIdCompany)
         {
-            //gKtp0IW7eKqn6T3ar5+HVw==
-            //var idCompany = "1";
-            var encriptedIdC = "m4R0rUAW4REnW0XPhHfDCw==";
-            //var documentNumber = "1234567890";
-
-            //var encriptedIdC = CryptoHelper.Encrypt(idCompany);
-            //idCompany = CryptoHelper.Decrypt(encriptedIdC);
-
-            //var encriptedNum = CryptoHelper.Encrypt(documentNumber);
-            //documentNumber = CryptoHelper.Decrypt(encriptedNum);
-
-            var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);
-            documentNumber = StringHelper.EliminateFirstAndLast(documentNumber);
+            var IdentificationNumber = CryptoHelper.Decrypt(encryptedIdentificationNumber);
+            IdentificationNumber = StringHelper.EliminateFirstAndLast(IdentificationNumber);
 
             var idCompany = CryptoHelper.Decrypt(encryptedIdCompany);
             idCompany = StringHelper.EliminateFirstAndLast(idCompany);
@@ -62,7 +51,7 @@ namespace KontrolarCloud.Controllers
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                     new Claim("idCompany", idCompany),
-                    new Claim("documentNumber", documentNumber)
+                    new Claim("IdentificationNumber", IdentificationNumber)
                 };
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
@@ -89,34 +78,35 @@ namespace KontrolarCloud.Controllers
             }
         }
 
-        [HttpGet("GetCompaniesByDocumentNumber/{encryptedDocumentNumber}")]
-        public async Task<IActionResult> GetCompaniesByDocumentNumber(string encryptedDocumentNumber)
+        [HttpGet("GetCompaniesByIdentificationNumber/{encryptedIdentificationNumber}")]
+        public async Task<IActionResult> GetCompaniesByIdentificationNumber(string encryptedIdentificationNumber)
         {
             try
             {
-                encryptedDocumentNumber = Uri.UnescapeDataString(encryptedDocumentNumber);
-                // Verificar si encryptedDocumentNumber es una cadena Base64 válida
-                byte[] encryptedBytes;
-                try
-                {
-                    encryptedBytes = Convert.FromBase64String(encryptedDocumentNumber);
-                }
-                catch (FormatException)
-                {
-                    return BadRequest("La cadena proporcionada no es una cadena Base64 válida.");
-                }
+                //encryptedIdentificationNumber = Uri.UnescapeDataString(encryptedIdentificationNumber);
+                //// Verificar si encryptedIdentificationNumber es una cadena Base64 válida
+                //byte[] encryptedBytes;
+                //try
+                //{
+                //    encryptedBytes = Convert.FromBase64String(encryptedIdentificationNumber);
+                //}
+                //catch (FormatException)
+                //{
+                //    return BadRequest("La cadena proporcionada no es una cadena Base64 válida.");
+                //}
 
-                var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);
-                documentNumber = StringHelper.EliminateFirstAndLast(documentNumber);
-                var (companies, userNotFound) = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);
+                //var IdentificationNumber = CryptoHelper.Decrypt(encryptedIdentificationNumber);
+                //IdentificationNumber = StringHelper.EliminateFirstAndLast(IdentificationNumber);
+                var IdentificationNumber = "123";
+                var (companies_UserCompanies, userNotFound) = await _unitOfWork.Companies.GetCompaniesByIdentificationNumber(IdentificationNumber);
 
                 if (userNotFound)
                 {
                     return NotFound("No se encontraron compañías para el número de documento proporcionado.");
                 }
 
-                var companiesJson = JsonConvert.SerializeObject(companies);
-                var encryptedData = CryptoHelper.Encrypt(companiesJson);
+                var userCompaniesJson = JsonConvert.SerializeObject(companies_UserCompanies);
+                var encryptedData = CryptoHelper.Encrypt(userCompaniesJson);
 
                 return Ok(encryptedData);
             }
@@ -166,7 +156,7 @@ namespace KontrolarCloud.Controllers
                     return NotFound(Json("User no encontrado"));
                 }
 
-                existingUser.DocumentNumber = updatedUser.DocumentNumber;
+                existingUser.IdentificationNumber = updatedUser.IdentificationNumber;
                 existingUser.Surnames = updatedUser.Surnames;             
 
                 _unitOfWork.Users.Update(existingUser);

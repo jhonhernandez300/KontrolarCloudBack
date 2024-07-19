@@ -14,11 +14,9 @@ namespace Core.Models
         [Key]
         public int IdCompany { get; set; }
         public required string CompanyName { get; set; }
-        public required string DB { get; set; }
-        public required string UserName { get; set; }
-        public required string CompanyPassword { get; set; }
+        public required string DB { get; set; }                
         public required DateTime LicenseValidDate { get; set; }
-        public required int ConnectionsSimultaneousNumber { get; set; }
+        public required int NumberSimiltaneousConnection { get; set; }
 
         public ICollection<UserCompany> UserCompanies { get; set; } = new List<UserCompany>();
     }

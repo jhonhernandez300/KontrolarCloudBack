@@ -35,13 +35,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 );
 
 //builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IBaseRepository<Company>, BaseRepository<Company>>();
-builder.Services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
 //builder.Services.AddScoped<IBaseRepository<UserCompany>, BaseRepository<UserCompany>>();
-builder.Services.AddScoped<IUserCompanyRepository, UserCompanyRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ILastIdRepository, LastIdRepository>();
+builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
+builder.Services.AddScoped<IOptionRepository, OptionRepository>();
+builder.Services.AddScoped<IOptionProfileRepository, OptionProfileRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
+builder.Services.AddScoped<IUserCompanyRepository, UserCompanyRepository>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 
 builder.Services.AddSwaggerGen(c =>
 {

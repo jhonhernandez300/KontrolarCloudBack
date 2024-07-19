@@ -1,5 +1,5 @@
 {\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil Cascadia Mono;}{\f2\fnil\fcharset0 Cascadia Mono;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red255\green255\blue0;\red46\green117\blue182;\red163\green21\blue21;\red0\green128\blue0;\red0\green0\blue255;}
 {\*\generator Riched20 10.0.22621}\viewkind4\uc1 
 \pard\sa200\sl276\slmult1\qc\f0\fs36\lang10 Dudas y Errores de KONTROLAR CONTROL CLOUD\fs22\par
 
@@ -20,6 +20,33 @@
         .HasForeignKey(uc => uc.IdCompany);\par
 \par
     base.OnModelCreating(modelBuilder);\par
+\}\par
+\par
+[Table("MT_UsersCompanies")]\par
+public class UserCompany\par
+\{\par
+    [Key]\par
+    public int IdUserCompany \{ get; set; \}\par
+    public required int IdUser \{ get; set; \}\b\par
+    public required int IdCompany \{ get; set; \}\par
+\b0\par
+    public User? User \{ get; set; \}\par
+    \b public Company? Company \{ get; set; \}\b0\par
+\}\par
+\par
+[Table("MT_Companies")]\par
+public class Company\par
+\{\par
+    [Key]\par
+    public int IdCompany \{ get; set; \}\par
+    public required string CompanyName \{ get; set; \}\par
+    public required string DB \{ get; set; \}\par
+    public required string UserName \{ get; set; \}\par
+    public required string CompanyPassword \{ get; set; \}\par
+    public required DateTime LicenseValidDate \{ get; set; \}\par
+    public required int ConnectionsSimultaneousNumber \{ get; set; \}\par
+\par
+    \b public ICollection<UserCompany> UserCompanies \{ get; set; \} = new List<UserCompany>();\b0\par
 \}\par
 \par
 \lang9226 /////////////////////////////\par
@@ -64,17 +91,17 @@ public IActionResult Add([FromBody] User user)\par
 \par
 /////////////////////////////\par
 \par
-\b Al preguntarle a ChatGPT \b0 incluir Program.cs para que mire la inyecci\'f3n de dependencias\par
+\b Al preguntarle a ChatGPT \b0 incluir Program.cs para que \'e9l pueda mirar la inyecci\'f3n de dependencias\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
 \cf0\b\fs22\lang10 C\'f3mo crear un acci\'f3n en el controlador que use un SP\par
-\cf1\b0\fs19 public interface ICompanyRepository : IBaseRepository<Company>\par
+\cf1\b0\fs19 public interface \b ICompanyRepository \b0 : IBaseRepository<Company>\par
 \{\par
-    Task<List<Company>> GetCompaniesByDocumentNumber(string documentNumber);\par
+    Task<List<Company>> \ul GetCompaniesByDocumentNumber\ulnone (string documentNumber);\par
 \}\par
 \par
- public interface IUnitOfWork : IDisposable\par
+ public interface \highlight2 IUnitOfWork \highlight0 : IDisposable\par
  \{\par
      //IBaseRepository<Company> Companies \{ get; \}\par
      ICompanyRepository Companies \{ get; \}\par
@@ -86,7 +113,7 @@ public IActionResult Add([FromBody] User user)\par
      int Complete();\par
  \}\par
 \par
-public class CompanyRepository : BaseRepository<Company>, ICompanyRepository\par
+public class CompanyRepository : BaseRepository<Company>, \b ICompanyRepository\b0\par
 \{\par
     private readonly ApplicationDbContext _context;\par
 \par
@@ -96,7 +123,7 @@ public class CompanyRepository : BaseRepository<Company>, ICompanyRepository\par
     \}\par
 \par
     //Este m\'e9todo es distinto por que usa un SP en lugar de EF\par
-    public async Task<List<Company>> GetCompaniesByDocumentNumber(string documentNumber)\par
+    public async Task<List<Company>> \ul GetCompaniesByDocumentNumber\ulnone (string documentNumber)\par
     \{\par
         var companies = new List<Company>();\par
 \par
@@ -142,7 +169,7 @@ public class CompanyRepository : BaseRepository<Company>, ICompanyRepository\par
     \}\par
 \}\par
 \par
-public class UnitOfWork : IUnitOfWork\par
+public class UnitOfWork : \highlight2 IUnitOfWork\highlight0\par
 \{\par
     private readonly ApplicationDbContext _context;\par
 \par
@@ -177,12 +204,12 @@ public class UnitOfWork : IUnitOfWork\par
     \}\par
 \}\par
 \par
-[HttpGet("GetCompaniesByDocumentNumber/\{documentNumber\}")]\par
-public async Task<IActionResult> GetCompaniesByDocumentNumber(string documentNumber)\par
+[HttpGet("\ul GetCompaniesByDocumentNumber\ulnone /\{documentNumber\}")]\par
+public async Task<IActionResult> \ul GetCompaniesByDocumentNumber\ulnone (string documentNumber)\par
 \{\par
     try\par
     \{\par
-        var companies = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);\par
+        var companies = await _unitOfWork.Companies.\ul GetCompaniesByDocumentNumber\ulnone (documentNumber);\par
 \par
         if (companies == null || !companies.Any())\par
         \{\par
@@ -197,8 +224,9 @@ public async Task<IActionResult> GetCompaniesByDocumentNumber(string documentNum
     \}\par
 \}\par
 \par
+Program.cs\par
 //builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();\par
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();\par
+builder.Services.AddScoped<\highlight2 IUnitOfWork\highlight0 , UnitOfWork>();\par
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();\par
 builder.Services.AddScoped<IBaseRepository<Company>, BaseRepository<Company>>();\par
 builder.Services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();\par
@@ -209,7 +237,7 @@ builder.Services.AddScoped<ILastIdRepository, LastIdRepository>();\cf0\fs22\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
 \b Encriptar - desencriptar\b0\par
-\f1 using System.Security.Cryptography;\par
+using System.Security.Cryptography;\par
 \par
 namespace Core.Utils\par
 \{\par
@@ -218,7 +246,7 @@ namespace Core.Utils\par
         private static readonly string Key = "1234567890123456"; // 16 bytes\par
         private static readonly string Iv = "1234567890123456"; // 16 bytes\par
 \par
-        public static string Decrypt(string encryptedData)\par
+        public static string \b Decrypt\b0 (string encryptedData)\par
         \{\par
             byte[] cipherBytes = Convert.FromBase64String(encryptedData);\par
 \par
@@ -270,17 +298,17 @@ namespace Core.Utils\par
         \}\par
     \}\par
 \}\par
-\f0\par
-En la acci\'f3n del controlador:\par
-\f1 using Newtonsoft.Json;\f2  (Instalar el paq)\par
 \par
-\f1 [HttpGet("GetCompaniesByDocumentNumber/\{encryptedDocumentNumber\}")]\par
+En la acci\'f3n del controlador:\par
+using Newtonsoft.Json; (Instalar el paq)\par
+\par
+[HttpGet("GetCompaniesByDocumentNumber/\{encryptedDocumentNumber\}")]\par
 public async Task<IActionResult> GetCompaniesByDocumentNumber(string encryptedDocumentNumber)\par
 \{\par
     try\par
     \{\par
         encryptedDocumentNumber = Uri.UnescapeDataString(encryptedDocumentNumber);\par
-        // Verificar si encryptedDocumentNumber es una cadena Base64 v\f2\'e1lida\par
+        // Verificar si encryptedDocumentNumber es una cadena Base64 v\'e1lida\par
         byte[] encryptedBytes;\par
         try\par
         \{\par
@@ -291,7 +319,7 @@ public async Task<IActionResult> GetCompaniesByDocumentNumber(string encryptedDo
             return BadRequest("La cadena proporcionada no es una cadena Base64 v\'e1lida.");\par
         \}\par
 \par
-        var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);   \par
+        var documentNumber = CryptoHelper.\b Decrypt\b0 (encryptedDocumentNumber);   \par
         documentNumber = StringHelper.EliminateFirstAndLast(documentNumber); \par
         var companies = await _unitOfWork.Companies.GetCompaniesByDocumentNumber(documentNumber);\par
 \par
@@ -472,6 +500,145 @@ En ICompanyRepository\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
+\b C\'f3mo implementar el token\par
+\b0 En la carpeta Utils:\par
+public class Jwt\par
+\{\par
+    public required string Key \{ get; set; \}\par
+    public required string Issuer \{ get; set; \}\par
+    public required string Audience \{ get; set; \}\par
+    public required string Subject \{ get; set; \}\par
+                \par
+    public static dynamic CheckToken(ClaimsIdentity identity, ApplicationDbContext context)\par
+    \{\par
+        try\par
+        \{            \par
+            if (identity.Claims.Count() == 0)\par
+            \{\par
+                return new\par
+                \{\par
+                    success = false,\par
+                    message = "Token no v\'e1lido",\par
+                    result = ""\par
+                \};\par
+            \}\par
+\par
+            var id = identity.Claims.FirstOrDefault(x => x.Type == "id").Value;\par
+            //Usuario usuario = Usuario.DB().FirstOrDefault(x => x.idUsuario == id);\par
+\par
+            User company = context.Users\par
+                .Where(x => x.IdUser.ToString() == id)\par
+                .FirstOrDefault();\par
+\par
+            return new\par
+            \{\par
+                success = true,\par
+                message = "exito",                    \par
+                result = company\par
+            \};\par
+        \}\par
+        catch (Exception ex) \par
+        \{\par
+            return new\par
+            \{\par
+                success = false,\par
+                message = "Catch: " + ex.Message,\par
+                result = ""\par
+            \};\par
+        \}\par
+    \}\par
+\}\par
+\par
+\f2 En Program.cs:\par
+\f1 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\par
+    .AddJwtBearer(options => \{\par
+        IConfiguration configuration = builder.Configuration;\par
+\par
+        if (configuration != null)\par
+        \{\par
+            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters\par
+            \{\par
+                ValidateIssuer = true,\par
+                ValidateAudience = true,\par
+                ValidateLifetime = true,\par
+                ValidateIssuerSigningKey = true,\par
+                ValidIssuer = configuration["Jwt:Issuer"],\par
+                ValidAudience = configuration["Jwt:Audience"],\par
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))\par
+            \};\par
+        \}\par
+        else\par
+        \{\par
+            throw new InvalidOperationException("Configuration is null.");\par
+        \}\par
+    \});\par
+\par
+builder.Services.AddHttpContextAccessor();\par
+\par
+\f2 En appsettings:\par
+\cf3\f1 "AllowedHosts"\cf1 : \cf4 "*"\cf1 ,\par
+\cf3 "Jwt"\cf1 : \{\par
+  \cf5 //"key": "softwareLion123.@",\par
+\cf1   \cf3 "key"\cf1 : \cf4 "ColombiaLeGanaAArgentina1234567890"\cf1 ,\par
+  \cf3 "Issuer"\cf1 : \cf4 "{\cf0{\field{\*\fldinst{HYPERLINK https://localhost:7202/ }}{\fldrslt{https://localhost:7202/\ul0\cf0}}}}\f1\fs19 "\cf1 ,\par
+  \cf3 "Audience"\cf1 : \cf4 "{\cf0{\field{\*\fldinst{HYPERLINK https://localhost:7202/ }}{\fldrslt{https://localhost:7202/\ul0\cf0}}}}\f1\fs19 "\cf1 ,\par
+  \cf3 "Subject"\cf1 : \cf4 "baseWebApiSubject"\par
+\cf1\},\par
+\par
+\f2 En el controlador:\par
+\f1 [HttpGet]  \par
+[Route("CreateToken/\{encryptedDocumentNumber\}/\{encryptedIdCompany\}")]\par
+//public dynamic CreateToken()\par
+public dynamic CreateToken(string encryptedDocumentNumber, string encryptedIdCompany)\par
+\{\par
+    var documentNumber = CryptoHelper.Decrypt(encryptedDocumentNumber);\par
+    documentNumber = StringHelper.EliminateFirstAndLast(documentNumber);\par
+\par
+    var idCompany = CryptoHelper.Decrypt(encryptedIdCompany);\par
+    idCompany = StringHelper.EliminateFirstAndLast(idCompany);\par
+\par
+    try\par
+    \{\par
+        var jwt = _configuration.GetSection("Jwt")\par
+            .Get<Jwt>();\par
+\par
+        var claims = new[]\par
+        \{\par
+            new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),\par
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),\par
+            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),\par
+            new Claim("idCompany", idCompany),\par
+            new Claim("documentNumber", documentNumber)\par
+        \};\par
+\par
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));\par
+        var singIng = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);\par
+\par
+        var token = new JwtSecurityToken(\par
+                jwt.Issuer,\par
+                jwt.Audience,\par
+                claims,\par
+                expires: DateTime.Now.AddMinutes(20),\par
+                signingCredentials: singIng\par
+        );\par
+\par
+        var response = new JwtSecurityTokenHandler().WriteToken(token);\par
+\par
+        var tokenJson = JsonConvert.SerializeObject(response);\par
+        var encryptedToken = CryptoHelper.Encrypt(tokenJson);\par
+\par
+        return encryptedToken;\par
+    \}\par
+    catch (Exception ex)\par
+    \{\par
+        return ex.Message;\par
+    \}\par
+\}\par
+\par
+\f2 Paquetes instalados:\par
+Microsoft.EntityFrameworkCore.Design\par
+En KontrolarCloud\par
+Microsoft.AspNetCore.Authentication.JwtBearer\f0\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par

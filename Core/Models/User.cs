@@ -13,9 +13,12 @@ namespace Core.Models
     {
         [Key]
         public int IdUser { get; set; }
-        public required string DocumentNumber { get; set; }
+        public required string IdentificationNumber { get; set; }
+        public required string Names { get; set; }
         public required string Surnames { get; set; }
+        public required bool UserMaster { get; set; }
 
         public ICollection<UserCompany> UserCompanies { get; set; } = new List<UserCompany>();
+        public ICollection<UserProfile> UsersProfiles { get; set; } = new List<UserProfile>();
     }
 }

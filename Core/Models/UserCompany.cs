@@ -12,9 +12,12 @@ namespace Core.Models
     public class UserCompany
     {
         [Key]
-        public int IdUserCompany { get; set; }
+        public long Id { get; set; }
         public required int IdUser { get; set; }
         public required int IdCompany { get; set; }
+        public required string Password { get; set; }
+        public required string Correo { get; set; }
+        public required int IsEnabled { get; set; }
 
         public User? User { get; set; }
         public Company? Company { get; set; }

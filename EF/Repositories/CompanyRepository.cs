@@ -20,9 +20,9 @@ namespace EF.Repositories
         }
 
         //Este método es distinto por que usa un SP en lugar de EF
-        public async Task<(List<Company> companies, bool userNotFound)> GetCompaniesByDocumentNumber(string documentNumber)
+        public async Task<(List<Company_UserCompanyDTO> companies_UserCompanies, bool userNotFound)> GetCompaniesByIdentificationNumber(string identificationNumber)
         {
-            var companies = new List<Company>();
+            var companies_UserCompanies = new List<Company_UserCompanyDTO>();
             bool userNotFound = false;
 
             var conn = _context.Database.GetDbConnection();
@@ -33,12 +33,12 @@ namespace EF.Repositories
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "GetCompaniesByDocumentNumber";
+                    command.CommandText = "SP_GetCompaniesByIdentificationNumber";
                     command.CommandType = CommandType.StoredProcedure;
 
                     var param = command.CreateParameter();
-                    param.ParameterName = "@DocumentNumber";
-                    param.Value = documentNumber;
+                    param.ParameterName = "@IdentificationNumber";
+                    param.Value = identificationNumber;
                     command.Parameters.Add(param);
 
                     var userNotFoundParam = command.CreateParameter();
@@ -47,21 +47,24 @@ namespace EF.Repositories
                     userNotFoundParam.Direction = ParameterDirection.Output;
                     command.Parameters.Add(userNotFoundParam);
 
-                    Console.WriteLine($"Executing stored procedure with DocumentNumber: {documentNumber}");
+                    Console.WriteLine($"Executing stored procedure with IdentificationNumber: {identificationNumber}");
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
-                            companies.Add(new Company
+                            companies_UserCompanies.Add(new Company_UserCompanyDTO
                             {
                                 IdCompany = reader.GetInt32(0),
                                 CompanyName = reader.GetString(1),
                                 DB = reader.GetString(2),
-                                UserName = reader.GetString(3),
-                                CompanyPassword = reader.GetString(4),
-                                LicenseValidDate = reader.GetDateTime(5),
-                                ConnectionsSimultaneousNumber = reader.GetInt32(6)
+                                LicenseValidDate = reader.GetDateTime(3),
+                                NumberSimiltaneousConnection = reader.GetInt32(4),
+                                Id = reader.GetInt64(5),
+                                Correo = reader.GetString(6),
+                                IdUser = reader.GetInt32(7),
+                                IsEnabled = reader.GetBoolean(8),
+                                Password = reader.GetString(9)
                             });
                         }
                     }
@@ -82,7 +85,8 @@ namespace EF.Repositories
                 Console.WriteLine("Database connection closed.");
             }
 
-            return (companies, userNotFound);
+            return (companies_UserCompanies, userNotFound);
         }
+
     }
 }
