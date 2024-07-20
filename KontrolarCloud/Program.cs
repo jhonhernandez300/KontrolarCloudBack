@@ -25,12 +25,16 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
-
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         configuration.GetConnectionString("DefaultConnection"),
         sqlOptions => sqlOptions.MigrationsAssembly("EF")
+    )
+);
+
+builder.Services.AddDbContext<SecondaryDbContext>(options =>
+    options.UseSqlServer(
+        configuration.GetConnectionString("SecondaryConnection")
     )
 );
 

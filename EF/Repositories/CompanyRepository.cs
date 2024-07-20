@@ -1,4 +1,5 @@
-﻿using Core.Interfaces;
+﻿using Core.DTO;
+using Core.Interfaces;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System;

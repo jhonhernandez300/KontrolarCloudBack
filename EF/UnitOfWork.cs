@@ -13,9 +13,10 @@ namespace EF
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
+        private readonly SecondaryDbContext _secondaryContext;
 
         public UnitOfWork(ApplicationDbContext context,
-                          //IBaseRepository<Company> companies,
+                            SecondaryDbContext secondaryContext,                          
                           IBaseRepository<User> users,
                           ICompanyRepository companies,
                           IModuleRepository modules,
@@ -28,19 +29,20 @@ namespace EF
                           
         {
             _context = context;
+            _secondaryContext = secondaryContext;
             Companies = companies;
             LastIds = lastIds;
             Modules = modules;
             Options = options;
             OptionsProfiles = optionsProfiles;
             Profiles = profiles;
-            Users = users;
+            //Users = users;
+            Users = new UserRepository(_context, _secondaryContext);
             UsersCompanies = usersCompanies;
             UsersProfiles = usersProfiles;
         }
 
-        //public IBaseRepository<Company> Companies { get; private set; }
-        public IBaseRepository<User> Users { get; private set; }
+        public IUserRepository Users { get; private set; }
         public ICompanyRepository Companies { get; private set; }
         public ILastIdRepository LastIds { get; private set; }
         public IModuleRepository Modules { get; private set; }
@@ -58,6 +60,7 @@ namespace EF
         public void Dispose()
         {
             _context.Dispose();
+            _secondaryContext.Dispose();
         }
     }
 

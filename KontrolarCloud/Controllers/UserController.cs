@@ -29,6 +29,51 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [HttpGet("GetOptionsByProfile/{encryptedIdUser}/{encryptedIdProfile}")]
+        public async Task<IActionResult> GetOptionsByProfile(string encryptedIdUser, string encryptedIdProfile)
+        {
+            try
+            {
+                //encryptedIdUser = Uri.UnescapeDataString(encryptedIdUser);
+                //encryptedIdProfile = Uri.UnescapeDataString(encryptedIdProfile);
+
+                //// Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
+                //byte[] encryptedUserBytes;
+                //byte[] encryptedProfileBytes;
+                //try
+                //{
+                //    encryptedUserBytes = Convert.FromBase64String(encryptedIdUser);
+                //    encryptedProfileBytes = Convert.FromBase64String(encryptedIdProfile);
+                //}
+                //catch (FormatException)
+                //{
+                //    return BadRequest("Una o ambas cadenas proporcionadas no son válidas en Base64.");
+                //}
+
+                //var idUser = int.Parse(CryptoHelper.Decrypt(encryptedIdUser));
+                //var idProfile = int.Parse(CryptoHelper.Decrypt(encryptedIdProfile));
+                var idUser = 1;
+                var idProfile = 1;
+
+                var (moduleOptionDTOs, message, operationExecuted) = await _unitOfWork.Users.ProfileGetOptions(idUser, idProfile);
+
+                if (!operationExecuted)
+                {
+                    return NotFound(message);
+                }
+
+                var moduleOptionsJson = JsonConvert.SerializeObject(moduleOptionDTOs);
+                var encryptedData = CryptoHelper.Encrypt(moduleOptionsJson);
+
+                return Ok(encryptedData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
+            }
+        }
+
+
         [HttpGet]  
         [Route("CreateToken/{encryptedIdentificationNumber}/{encryptedIdCompany}")]
         //public dynamic CreateToken()
@@ -83,21 +128,21 @@ namespace KontrolarCloud.Controllers
         {
             try
             {
-                //encryptedIdentificationNumber = Uri.UnescapeDataString(encryptedIdentificationNumber);
-                //// Verificar si encryptedIdentificationNumber es una cadena Base64 válida
-                //byte[] encryptedBytes;
-                //try
-                //{
-                //    encryptedBytes = Convert.FromBase64String(encryptedIdentificationNumber);
-                //}
-                //catch (FormatException)
-                //{
-                //    return BadRequest("La cadena proporcionada no es una cadena Base64 válida.");
-                //}
+                encryptedIdentificationNumber = Uri.UnescapeDataString(encryptedIdentificationNumber);
+                // Verificar si encryptedIdentificationNumber es una cadena Base64 válida
+                byte[] encryptedBytes;
+                try
+                {
+                    encryptedBytes = Convert.FromBase64String(encryptedIdentificationNumber);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest("La cadena proporcionada no es una cadena Base64 válida.");
+                }
 
-                //var IdentificationNumber = CryptoHelper.Decrypt(encryptedIdentificationNumber);
-                //IdentificationNumber = StringHelper.EliminateFirstAndLast(IdentificationNumber);
-                var IdentificationNumber = "123";
+                var IdentificationNumber = CryptoHelper.Decrypt(encryptedIdentificationNumber);
+                IdentificationNumber = StringHelper.EliminateFirstAndLast(IdentificationNumber);
+                
                 var (companies_UserCompanies, userNotFound) = await _unitOfWork.Companies.GetCompaniesByIdentificationNumber(IdentificationNumber);
 
                 if (userNotFound)

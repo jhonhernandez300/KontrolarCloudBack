@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.DTO;
+using Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace Core.Interfaces
 {
     public interface IProfileRepository : IBaseRepository<Profile>
     {
+        
     }
 }

@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 namespace Core
 {
     public interface IUnitOfWork : IDisposable
-    {
-        //IBaseRepository<Company> Companies { get; }        
-        IBaseRepository<User> Users { get; }
+    {               
+        IUserRepository Users { get; }
         ICompanyRepository Companies { get; }
         ILastIdRepository LastIds { get; }
         IModuleRepository Modules { get; }
