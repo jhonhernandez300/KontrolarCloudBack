@@ -23,9 +23,8 @@ namespace EF.Repositories
         }
 
         public async Task<(List<ModuleOptionDTO> moduleOptionDTOs, string message, bool operationExecuted)> ProfileGetOptions(
-        int idUser,
-        int idProfile
-        )
+     int idUser,
+     int idProfile)
         {
             var modulesOptions = new List<ModuleOptionDTO>();
             string message = "";
@@ -33,7 +32,8 @@ namespace EF.Repositories
 
             var conn = _secondaryContext.Database.GetDbConnection();
 
-            try {
+            try
+            {
                 await conn.OpenAsync();
 
                 using (var command = conn.CreateCommand())
@@ -41,10 +41,10 @@ namespace EF.Repositories
                     command.CommandType = System.Data.CommandType.StoredProcedure;
                     command.CommandText = "SP_ProfileGetOptions";
 
-                    var param = command.CreateParameter();
-                    param.ParameterName = "@IdUser";
-                    param.Value = idUser;
-                    command.Parameters.Add(param);
+                    var param1 = command.CreateParameter();
+                    param1.ParameterName = "@IdUser";
+                    param1.Value = idUser;
+                    command.Parameters.Add(param1);
 
                     var param2 = command.CreateParameter();
                     param2.ParameterName = "@IdProfile";
@@ -53,15 +53,15 @@ namespace EF.Repositories
 
                     var messageParam = command.CreateParameter();
                     messageParam.ParameterName = "@Message";
-                    messageParam.DbType = DbType.String;
-                    messageParam.Size = 500;
-                    messageParam.Direction = ParameterDirection.Output;
+                    messageParam.DbType = System.Data.DbType.String;
+                    messageParam.Size = int.MaxValue;
+                    messageParam.Direction = System.Data.ParameterDirection.Output;
                     command.Parameters.Add(messageParam);
 
                     var operationExecutedParam = command.CreateParameter();
                     operationExecutedParam.ParameterName = "@OperationExecuted";
-                    operationExecutedParam.DbType = DbType.Boolean;
-                    operationExecutedParam.Direction = ParameterDirection.Output;
+                    operationExecutedParam.DbType = System.Data.DbType.Boolean;
+                    operationExecutedParam.Direction = System.Data.ParameterDirection.Output;
                     command.Parameters.Add(operationExecutedParam);
 
                     using (var reader = await command.ExecuteReaderAsync())
@@ -72,13 +72,16 @@ namespace EF.Repositories
                             {
                                 IdModule = reader.GetInt32(0),
                                 NameModule = reader.GetString(1),
-                                IdOption = reader.GetInt32(2),
-                                NameOption = reader.GetString(3),
-                                Description = reader.GetString(4),
-                                Icon = reader.GetString(5),
-                                Controler = reader.GetString(6),
-                                Action = reader.GetString(7),
-                                OrderBy = reader.GetInt32(8)
+                                IconModule = reader.GetString(2),
+                                colorModule = reader.GetString(3),
+                                IdOption = reader.GetInt32(4),
+                                IconOption = reader.GetString(5),
+                                NameOption = reader.GetString(6),
+                                Description = reader.GetString(7),
+                                Controler = reader.GetString(8),
+                                Action = reader.GetString(9),
+                                OrderBy = reader.GetInt32(10),
+                                UserAssigned = reader.GetString(11)
                             });
                         }
                     }
@@ -100,6 +103,8 @@ namespace EF.Repositories
 
             return (modulesOptions, message, operationExecuted);
         }
+
+
 
     }
 }

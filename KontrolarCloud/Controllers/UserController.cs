@@ -34,26 +34,29 @@ namespace KontrolarCloud.Controllers
         {
             try
             {
-                //encryptedIdUser = Uri.UnescapeDataString(encryptedIdUser);
-                //encryptedIdProfile = Uri.UnescapeDataString(encryptedIdProfile);
+                encryptedIdUser = Uri.UnescapeDataString(encryptedIdUser);
+                encryptedIdProfile = Uri.UnescapeDataString(encryptedIdProfile);
 
-                //// Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
-                //byte[] encryptedUserBytes;
-                //byte[] encryptedProfileBytes;
-                //try
-                //{
-                //    encryptedUserBytes = Convert.FromBase64String(encryptedIdUser);
-                //    encryptedProfileBytes = Convert.FromBase64String(encryptedIdProfile);
-                //}
-                //catch (FormatException)
-                //{
-                //    return BadRequest("Una o ambas cadenas proporcionadas no son válidas en Base64.");
-                //}
+                // Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
+                byte[] encryptedUserBytes;
+                byte[] encryptedProfileBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedIdUser);
+                    encryptedProfileBytes = Convert.FromBase64String(encryptedIdProfile);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest("Una o ambas cadenas proporcionadas no son válidas en Base64.");
+                }
 
-                //var idUser = int.Parse(CryptoHelper.Decrypt(encryptedIdUser));
-                //var idProfile = int.Parse(CryptoHelper.Decrypt(encryptedIdProfile));
-                var idUser = 1;
-                var idProfile = 1;
+                var decryptedIdUser = CryptoHelper.Decrypt(encryptedIdUser);
+                var trimmedIdUser = StringHelper.EliminateFirstAndLast(decryptedIdUser);
+                int idUser = Convert.ToInt32(trimmedIdUser);
+
+                var decryptedIdProfile = CryptoHelper.Decrypt(encryptedIdProfile);
+                var trimmedIdProfile = StringHelper.EliminateFirstAndLast(decryptedIdProfile);
+                int idProfile = Convert.ToInt32(trimmedIdProfile);
 
                 var (moduleOptionDTOs, message, operationExecuted) = await _unitOfWork.Users.ProfileGetOptions(idUser, idProfile);
 
