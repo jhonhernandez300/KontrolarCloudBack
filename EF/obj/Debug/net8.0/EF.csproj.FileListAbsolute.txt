@@ -15,3 +15,4 @@ C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\refint
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.pdb
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.genruntimeconfig.cache
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\ref\EF.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.sourcelink.json

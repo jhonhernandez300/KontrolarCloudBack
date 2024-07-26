@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,11 +23,13 @@ namespace EF.Repositories
             _secondaryContext = secondaryContext;
         }
 
-        public async Task<(List<ModuleOptionDTO> moduleOptionDTOs, string message, bool operationExecuted)> ProfileGetOptions(
-     int idUser,
-     int idProfile)
+        public async Task<(
+            List<ModuleDTO> moduleOptionDTOs, 
+            string message, 
+            bool operationExecuted
+         )> ProfileGetOptions(int idUser)
         {
-            var modulesOptions = new List<ModuleOptionDTO>();
+            var modules = new List<ModuleDTO>();
             string message = "";
             bool operationExecuted = false;
 
@@ -39,17 +42,17 @@ namespace EF.Repositories
                 using (var command = conn.CreateCommand())
                 {
                     command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.CommandText = "SP_ProfileGetOptions";
+                    command.CommandText = "SP_AdminProfiles";
 
                     var param1 = command.CreateParameter();
                     param1.ParameterName = "@IdUser";
                     param1.Value = idUser;
                     command.Parameters.Add(param1);
 
-                    var param2 = command.CreateParameter();
-                    param2.ParameterName = "@IdProfile";
-                    param2.Value = idProfile;
-                    command.Parameters.Add(param2);
+                    var paramOption = command.CreateParameter();
+                    paramOption.ParameterName = "@Option";
+                    paramOption.Value = "GetOptionsAssigned";
+                    command.Parameters.Add(paramOption); 
 
                     var messageParam = command.CreateParameter();
                     messageParam.ParameterName = "@Message";
@@ -66,23 +69,39 @@ namespace EF.Repositories
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
+                        // Leer primer resultado (módulos)
                         while (await reader.ReadAsync())
                         {
-                            modulesOptions.Add(new ModuleOptionDTO
+                            modules.Add(new ModuleDTO
                             {
                                 IdModule = reader.GetInt32(0),
                                 NameModule = reader.GetString(1),
-                                IconModule = reader.GetString(2),
-                                colorModule = reader.GetString(3),
-                                IdOption = reader.GetInt32(4),
-                                IconOption = reader.GetString(5),
-                                NameOption = reader.GetString(6),
-                                Description = reader.GetString(7),
-                                Controler = reader.GetString(8),
-                                Action = reader.GetString(9),
-                                OrderBy = reader.GetInt32(10),
-                                UserAssigned = reader.GetString(11)
+                                Icon = reader.GetString(2),
+                                Color = reader.GetString(3)
                             });
+                        }
+
+                        // Leer el siguiente conjunto de resultados (opciones)
+                        if (await reader.NextResultAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var module = modules.FirstOrDefault(m => m.IdModule == reader.GetInt32(0));
+                                if (module != null)
+                                {
+                                    module.Options.Add(new OptionDTO
+                                    {
+                                        IdOption = reader.GetInt32(1),
+                                        Icon = reader.GetString(2),
+                                        NameOption = reader.GetString(3),
+                                        Description = reader.GetString(4),
+                                        Controler = reader.GetString(5),
+                                        Action = reader.GetString(6),
+                                        OrderBy = reader.GetInt32(7),
+                                        UserAssigned = reader.GetString(8)
+                                    });
+                                }
+                            }
                         }
                     }
 
@@ -101,7 +120,7 @@ namespace EF.Repositories
                 Console.WriteLine("Database connection closed.");
             }
 
-            return (modulesOptions, message, operationExecuted);
+            return (modules, message, operationExecuted);
         }
 
 

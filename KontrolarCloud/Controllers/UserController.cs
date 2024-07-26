@@ -29,21 +29,18 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet("GetOptionsByProfile/{encryptedIdUser}/{encryptedIdProfile}")]
-        public async Task<IActionResult> GetOptionsByProfile(string encryptedIdUser, string encryptedIdProfile)
+        [HttpGet("GetOptionsByIdUser/{encryptedIdUser}")]
+        public async Task<IActionResult> GetOptionsByIdUser(string encryptedIdUser)
         {
             try
             {
                 encryptedIdUser = Uri.UnescapeDataString(encryptedIdUser);
-                encryptedIdProfile = Uri.UnescapeDataString(encryptedIdProfile);
 
                 // Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
                 byte[] encryptedUserBytes;
-                byte[] encryptedProfileBytes;
                 try
                 {
                     encryptedUserBytes = Convert.FromBase64String(encryptedIdUser);
-                    encryptedProfileBytes = Convert.FromBase64String(encryptedIdProfile);
                 }
                 catch (FormatException)
                 {
@@ -52,20 +49,16 @@ namespace KontrolarCloud.Controllers
 
                 var decryptedIdUser = CryptoHelper.Decrypt(encryptedIdUser);
                 var trimmedIdUser = StringHelper.EliminateFirstAndLast(decryptedIdUser);
-                int idUser = Convert.ToInt32(trimmedIdUser);
+                int idUser = Convert.ToInt32(trimmedIdUser);                
 
-                var decryptedIdProfile = CryptoHelper.Decrypt(encryptedIdProfile);
-                var trimmedIdProfile = StringHelper.EliminateFirstAndLast(decryptedIdProfile);
-                int idProfile = Convert.ToInt32(trimmedIdProfile);
-
-                var (moduleOptionDTOs, message, operationExecuted) = await _unitOfWork.Users.ProfileGetOptions(idUser, idProfile);
-
+                var (modules, message, operationExecuted) = await _unitOfWork.Users.ProfileGetOptions(idUser);
+                
                 if (!operationExecuted)
                 {
                     return NotFound(message);
                 }
 
-                var moduleOptionsJson = JsonConvert.SerializeObject(moduleOptionDTOs);
+                var moduleOptionsJson = JsonConvert.SerializeObject(modules);
                 var encryptedData = CryptoHelper.Encrypt(moduleOptionsJson);
 
                 return Ok(encryptedData);

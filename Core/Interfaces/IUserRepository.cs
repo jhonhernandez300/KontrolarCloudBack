@@ -10,6 +10,6 @@ namespace Core.Interfaces
 {
     public interface IUserRepository : IBaseRepository<User>
     {
-        Task<(List<ModuleOptionDTO> moduleOptionDTOs, string message, bool operationExecuted)> ProfileGetOptions(int idUser, int idProfile);
+        Task<(List<ModuleDTO> moduleOptionDTOs, string message, bool operationExecuted)> ProfileGetOptions(int idUser);        
     }
 }

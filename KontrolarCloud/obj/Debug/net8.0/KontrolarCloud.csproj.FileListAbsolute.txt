@@ -85,3 +85,4 @@ C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\n
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.pdb
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.genruntimeconfig.cache
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\ref\KontrolarCloud.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.sourcelink.json

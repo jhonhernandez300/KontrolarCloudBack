@@ -13,19 +13,19 @@ namespace Core.DTO
         public int IdModuleOptionDTO { get; set; }
 
         public int IdModule { get; set; }
-        public required string NameModule { get; set; }
-        public required string IconModule { get; set; }
-        public required string colorModule { get; set; }
+        public string? NameModule { get; set; }
+        public string? IconModule { get; set; }
+        public string? colorModule { get; set; }
 
         public int IdOption { get; set; }
-        public required string IconOption { get; set; }
-        public required string NameOption { get; set; }
-        public required string Description { get; set; }
+        public string? IconOption { get; set; }
+        public string? NameOption { get; set; }
+        public string? Description { get; set; }
 
-        public required string Controler { get; set; }
-        public required string Action { get; set; }
-        public required int OrderBy { get; set; }
-        public required string UserAssigned { get; set; }
+        public string? Controler { get; set; }
+        public string? Action { get; set; }
+        public int OrderBy { get; set; }
+        public string? UserAssigned { get; set; }
     }
 
 }
