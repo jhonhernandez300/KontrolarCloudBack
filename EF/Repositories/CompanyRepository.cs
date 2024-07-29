@@ -21,10 +21,11 @@ namespace EF.Repositories
         }
 
         //Este método es distinto por que usa un SP en lugar de EF
-        public async Task<(List<Company_UserCompanyDTO> companies_UserCompanies, bool userNotFound)> GetCompaniesByIdentificationNumber(string identificationNumber)
+        public async Task<(List<Company_UserCompanyDTO> companies_UserCompanies, bool operationExecuted, string message)> GetCompaniesByIdentificationNumber(string identificationNumber)
         {
             var companies_UserCompanies = new List<Company_UserCompanyDTO>();
-            bool userNotFound = false;
+            bool operationExecuted = false;
+            string message = string.Empty;
 
             var conn = _context.Database.GetDbConnection();
             try
@@ -34,24 +35,39 @@ namespace EF.Repositories
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SP_GetCompaniesByIdentificationNumber";
+                    command.CommandText = "SP_AdminUsers2";
                     command.CommandType = CommandType.StoredProcedure;
+
+                    var optionParam = command.CreateParameter();
+                    optionParam.ParameterName = "@Option";
+                    optionParam.Value = "GetCompaniesAssigned";
+                    command.Parameters.Add(optionParam);
 
                     var param = command.CreateParameter();
                     param.ParameterName = "@IdentificationNumber";
                     param.Value = identificationNumber;
                     command.Parameters.Add(param);
 
-                    var userNotFoundParam = command.CreateParameter();
-                    userNotFoundParam.ParameterName = "@UserNotFound";
-                    userNotFoundParam.DbType = DbType.Boolean;
-                    userNotFoundParam.Direction = ParameterDirection.Output;
-                    command.Parameters.Add(userNotFoundParam);
+                    var messageParam = command.CreateParameter();
+                    messageParam.ParameterName = "@Message";
+                    messageParam.DbType = DbType.String;
+                    messageParam.Size = -1; // Cambiado a -1 para NVARCHAR(MAX)
+                    messageParam.Direction = ParameterDirection.Output;
+                    command.Parameters.Add(messageParam);
+
+                    var operationExecutedParam = command.CreateParameter();
+                    operationExecutedParam.ParameterName = "@OperationExecuted";
+                    operationExecutedParam.DbType = DbType.Boolean;
+                    operationExecutedParam.Direction = ParameterDirection.Output;
+                    command.Parameters.Add(operationExecutedParam);
 
                     Console.WriteLine($"Executing stored procedure with IdentificationNumber: {identificationNumber}");
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
+                        // Avanza al segundo conjunto de resultados
+                        await reader.NextResultAsync();
+
                         while (await reader.ReadAsync())
                         {
                             companies_UserCompanies.Add(new Company_UserCompanyDTO
@@ -70,7 +86,15 @@ namespace EF.Repositories
                         }
                     }
 
-                    userNotFound = (bool)userNotFoundParam.Value;
+                    if (messageParam.Value != DBNull.Value)
+                    {
+                        message = (string)messageParam.Value;
+                    }
+
+                    if (operationExecutedParam.Value != DBNull.Value)
+                    {
+                        operationExecuted = (bool)operationExecutedParam.Value;
+                    }                    
                 }
 
                 Console.WriteLine("Stored procedure executed successfully.");
@@ -86,7 +110,7 @@ namespace EF.Repositories
                 Console.WriteLine("Database connection closed.");
             }
 
-            return (companies_UserCompanies, userNotFound);
+            return (companies_UserCompanies, operationExecuted, message);
         }
 
     }

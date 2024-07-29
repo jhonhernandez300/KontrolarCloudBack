@@ -137,19 +137,19 @@ namespace KontrolarCloud.Controllers
                 }
 
                 var IdentificationNumber = CryptoHelper.Decrypt(encryptedIdentificationNumber);
-                IdentificationNumber = StringHelper.EliminateFirstAndLast(IdentificationNumber);
-                
-                var (companies_UserCompanies, userNotFound) = await _unitOfWork.Companies.GetCompaniesByIdentificationNumber(IdentificationNumber);
+                IdentificationNumber = StringHelper.EliminateFirstAndLast(IdentificationNumber);               
 
-                if (userNotFound)
+                var (companies_UserCompanies, operationExecuted, message) = await _unitOfWork.Companies.GetCompaniesByIdentificationNumber(IdentificationNumber);
+
+                if (!operationExecuted)
                 {
-                    return NotFound("No se encontraron compañías para el número de documento proporcionado.");
+                    return NotFound(message);
                 }
 
                 var userCompaniesJson = JsonConvert.SerializeObject(companies_UserCompanies);
                 var encryptedData = CryptoHelper.Encrypt(userCompaniesJson);
 
-                return Ok(encryptedData);
+                return Ok(encryptedData);                
             }
             catch (Exception ex)
             {

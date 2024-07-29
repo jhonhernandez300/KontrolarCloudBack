@@ -10,6 +10,6 @@ namespace Core.Interfaces
 {
     public interface ICompanyRepository : IBaseRepository<Company>
     {
-        Task<(List<Company_UserCompanyDTO> companies_UserCompanies, bool userNotFound)> GetCompaniesByIdentificationNumber(string documentNumber);
+        Task<(List<Company_UserCompanyDTO> companies_UserCompanies, bool operationExecuted, string message)> GetCompaniesByIdentificationNumber(string documentNumber);
     }
 }
