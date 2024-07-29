@@ -1,11 +1,13 @@
 ﻿using Core.DTO;
 using Core.Interfaces;
 using Core.Models;
+using EF.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -81,7 +83,8 @@ namespace EF.Repositories
                                 Correo = reader.GetString(6),
                                 IdUser = reader.GetInt32(7),
                                 IsEnabled = reader.GetBoolean(8),
-                                Password = reader.GetString(9)
+                                //Password = reader.GetString(9)
+                                Password = EncryptAndRemoveQuotes(reader.GetString(9))
                             });
                         }
                     }
@@ -111,6 +114,12 @@ namespace EF.Repositories
             }
 
             return (companies_UserCompanies, operationExecuted, message);
+        }
+
+        public string EncryptAndRemoveQuotes(string input)
+        {
+            string passwordDecrypted = CryptoHelper.Decrypt(input);
+            return StringHelper.EliminateFirstAndLast(passwordDecrypted);
         }
 
     }
