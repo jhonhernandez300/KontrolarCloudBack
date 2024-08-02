@@ -14,7 +14,7 @@ namespace Core.Interfaces
         Task<T> GetByIdAsync(int id);
         IEnumerable<T> GetAll();
         Task<IEnumerable<T>> GetAllAsync();
-        T Find(Expression<Func<T, bool>> criteria, string[] includes = null);
+        T Find(Expression<Func<T, bool>> criteria, string[]? includes = null);
 
         Task<T> FindAsync(Expression<Func<T, bool>> criteria, string[] includes = null);
 

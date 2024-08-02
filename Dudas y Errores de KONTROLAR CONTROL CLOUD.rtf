@@ -701,10 +701,147 @@ public async Task<IActionResult> GetUser(int id)\par
 \par
 /////////////////////////////\par
 \par
+\b Poner otro context para usar 2 bases de datos\par
+\b0\f1  public interface ILastIdsKTRL2Repository : IBaseRepository<LastIdsKTRL2>\par
+ \{\par
+     LastIdsKTRL2 GetBigger(string tableName);\par
+     Task<LastIdsKTRL2> GetBiggerAsync(string tableName);\par
+ \}\par
+\par
+ [Table("MT_LastIdsKTRL2")]\par
+ public class LastIdsKTRL2\par
+ \{\par
+     [Key]\par
+     public int IdLastIdsKTRL2 \{ get; set; \}\par
+     public required string TableName \{ get; set; \}\par
+     public required long Last \{ get; set; \}\par
+ \}\par
+\par
+\f2 En IUnitOfWork\par
+\f1 ILastIdsKTRL2Repository LastIdsKTRL2 \{ get; \}\par
+\par
+public class SecondaryBaseRepository<T> : IBaseRepository<T> where T : class\par
+\{\par
+       \par
+    protected SecondaryDbContext _context;\par
+\par
+    public SecondaryBaseRepository(SecondaryDbContext context)\par
+    \{\par
+        _context = context;\par
+    \}\par
+\par
+    public IEnumerable<T> GetAll()\par
+    \{\par
+        return _context.Set<T>().ToList();\par
+    \}\par
+\f0 contin\'faa como el BaseRepository\par
+\par
+\f1 public class \b SecondaryDbContext \b0 : DbContext\par
+\{\par
+    public SecondaryDbContext(DbContextOptions<SecondaryDbContext> options) : base(options)\par
+    \{\par
+    \}\par
+\par
+    public DbSet<UserProfile> UsersProfiles \{ get; set; \}\par
+    public DbSet<Profile> Profiles \{ get; set; \}\par
+    public DbSet<OptionProfile> OptionsProfiles \{ get; set; \}\par
+    public DbSet<Option> Options \{ get; set; \}\par
+    public DbSet<Module> Modules \{ get; set; \}\par
+    public DbSet<LastIdsKTRL2> LastIdsKTRL2 \{ get; set; \}\par
+\par
+    protected override void OnModelCreating(ModelBuilder modelBuilder)\par
+    \{\par
+        modelBuilder.Entity<UserProfile>()\par
+           .HasOne(uc => uc.User)\par
+           .WithMany(u => u.UsersProfiles)\par
+           .HasForeignKey(uc => uc.IdUser);\par
+\f2 ...\par
+\par
+\f1 public class \b UnitOfWork \b0 : IUnitOfWork\par
+\{\par
+    private readonly ApplicationDbContext _context;\par
+    private readonly SecondaryDbContext _secondaryContext;\par
+\par
+    public UnitOfWork(\par
+\f2\tab\f1 ILastIdsKTRL2Repository lastIdsKTRL2,\par
+\f2 )\par
+\{\par
+\f1 LastIdsKTRL2 = lastIdsKTRL2;\par
+\f2\}\par
+\f1 public ILastIdsKTRL2Repository LastIdsKTRL2 \{ get; private set; \}\par
+\par
+public int Complete()\par
+\{\par
+    return _context.SaveChanges() + _secondaryContext.SaveChanges();\par
+\}\par
+\par
+public async Task<int> CompleteAsync()\par
+\{\par
+    var primaryResult = await _context.SaveChangesAsync();\par
+    var secondaryResult = await _secondaryContext.SaveChangesAsync();\par
+    return primaryResult + secondaryResult;\par
+\}\par
+\par
+public void Dispose()\par
+\{\par
+    _context.Dispose();\par
+    _secondaryContext.Dispose();\par
+\}\f0\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
-\cf0\fs22\lang10\par
+\cf0\b\fs22\lang10 Implementar y usar automapper\par
+DTO DTOs\par
+\b0 Instalar automapper en el proyecto que tiene el controlador\par
+\par
+Crear las carpetas DTOs y Mapping\par
+\par
+En Mapping:\par
+\cf1\f1\fs19 using AutoMapper;\par
+using Core.Models;\par
+using KontrolarCloud.DTOs;\par
+\par
+namespace KontrolarCloud.Mapping\par
+\{\par
+    public class MappingProfile : AutoMapper.Profile\par
+    \{\par
+        public MappingProfile()\par
+        \{\par
+            CreateMap< Core.Models.Profile, ProfileDTO>().ReverseMap();\par
+        \}\par
+    \}\par
+\}\par
+\par
+\f2\lang9226 El DTOs\par
+\f1  public class ProfileDTO\par
+ \{\par
+     public int IdProfile \{ get; set; \}\par
+     public string CodProfile \{ get; set; \}\par
+     public string NameProfile \{ get; set; \}\par
+     public string Description \{ get; set; \}\par
+ \}\par
+\par
+\f2 En Program.cs\par
+\f1 using AutoMapper;\par
+using KontrolarCloud.Mapping;\par
+\par
+builder.Services.AddHttpContextAccessor();\f2  //Despu\'e9s de esto\par
+\f1\par
+builder.Services.AddAutoMapper(typeof(MappingProfile));\par
+\par
+\f2 En el controlador\par
+\f1 public async Task<IActionResult> AddAsync([FromBody] ProfileDTO profileDTO)\par
+\{\par
+    try\par
+    \{\par
+        if (profileDTO == null)\par
+        \{\par
+            return BadRequest(Json("Datos inv\f2\'e1lidos del profile"));\par
+        \}\par
+\par
+        var profile = _mapper.Map<Core.Models.Profile>(profileDTO); \f1\par
+\cf0\f0\fs22\lang10\par
+\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
 \par

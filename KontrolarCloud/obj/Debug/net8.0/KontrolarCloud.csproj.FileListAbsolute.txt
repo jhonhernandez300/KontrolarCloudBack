@@ -1,3 +1,11 @@
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.csproj.AssemblyReference.cache
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.AssemblyInfoInputs.cache
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.AssemblyInfo.cs
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.csproj.CoreCompileInputs.cache
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.sourcelink.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\appsettings.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\KontrolarCloud.exe
@@ -5,6 +13,8 @@ C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\n
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\KontrolarCloud.runtimeconfig.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\KontrolarCloud.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\KontrolarCloud.pdb
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Azure.Identity.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
@@ -64,14 +74,6 @@ C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\n
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\EF.dll
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\EF.pdb
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\bin\Debug\net8.0\Core.pdb
-C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.csproj.AssemblyReference.cache
-C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.AssemblyInfoInputs.cache
-C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.AssemblyInfo.cs
-C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.csproj.CoreCompileInputs.cache
-C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.sourcelink.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\staticwebassets\msbuild.KontrolarCloud.Microsoft.AspNetCore.StaticWebAssets.props

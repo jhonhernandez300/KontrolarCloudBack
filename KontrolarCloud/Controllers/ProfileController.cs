@@ -2,16 +2,11 @@
 using Core;
 using Core.Models;
 using Microsoft.AspNetCore.Cors;
-using EF.Utils;
 using Newtonsoft.Json;
-using EF.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using EF;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using KontrolarCloud.DTOs;
+using System.Threading.Tasks;
 
 namespace KontrolarCloud.Controllers
 {
@@ -20,24 +15,28 @@ namespace KontrolarCloud.Controllers
     [ApiController]
     public class ProfileController : Controller
     {
+        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         public IConfiguration _configuration;
 
-        public ProfileController(IConfiguration configuration, IUnitOfWork unitOfWork)
+        public ProfileController(IConfiguration configuration, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _configuration = configuration;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpPost("AddAsync")]
-        public async Task<IActionResult> AddAsync([FromBody] Profile profile)
+        public async Task<IActionResult> AddAsync([FromBody] ProfileDTO profileDTO)
         {
             try
             {
-                if (profile == null)
+                if (profileDTO == null)
                 {
                     return BadRequest(Json("Datos inválidos del profile"));
-                }                
+                }
+
+                var profile = _mapper.Map<Core.Models.Profile>(profileDTO); 
 
                 // Consultar el último ID usado para la tabla Profile
                 var lastIdRecord = await _unitOfWork.LastIdsKTRL2.GetBiggerAsync("MT_Profiles");
@@ -47,8 +46,8 @@ namespace KontrolarCloud.Controllers
                     return StatusCode(500, Json("No se encontró un registro de Last (id) para la tabla Profile"));
                 }
 
-                long newUserId = lastIdRecord.Last + 1; 
-                profile.IdProfile = (int)newUserId; 
+                long newUserId = lastIdRecord.Last + 1;
+                profile.IdProfile = (int)newUserId;
 
                 var nuevoProfile = _unitOfWork.Profiles.Add(profile);
                 _unitOfWork.Complete();

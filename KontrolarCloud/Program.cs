@@ -4,10 +4,13 @@ using Core.Models;
 using EF;
 using EF.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using AutoMapper;
+using KontrolarCloud.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +23,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowOrigins",
         builder => builder.WithOrigins("http://localhost:4200")
                           .AllowAnyHeader()
-                          .AllowAnyMethod());
+        .AllowAnyMethod());
 });
+
 
 builder.Services.AddControllers();
 
@@ -82,6 +86,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 
