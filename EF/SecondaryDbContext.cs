@@ -19,6 +19,7 @@ namespace EF
         public DbSet<OptionProfile> OptionsProfiles { get; set; }
         public DbSet<Option> Options { get; set; }
         public DbSet<Module> Modules { get; set; }
+        public DbSet<LastIdsKTRL2> LastIdsKTRL2 { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

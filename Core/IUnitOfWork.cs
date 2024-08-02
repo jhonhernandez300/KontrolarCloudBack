@@ -13,6 +13,7 @@ namespace Core
         IUserRepository Users { get; }
         ICompanyRepository Companies { get; }
         ILastIdsKTRL1Repository LastIdsKTRL1 { get; }
+        ILastIdsKTRL2Repository LastIdsKTRL2 { get; }
         IModuleRepository Modules { get; }
         IOptionRepository Options { get; }
         IOptionProfileRepository OptionsProfiles { get; }
@@ -21,5 +22,6 @@ namespace Core
         IUserProfileRepository UsersProfiles { get; }
 
         int Complete();
+        Task<int> CompleteAsync();
     }
 }

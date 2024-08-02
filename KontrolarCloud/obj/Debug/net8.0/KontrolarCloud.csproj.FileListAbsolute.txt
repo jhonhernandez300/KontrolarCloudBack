@@ -71,6 +71,7 @@ C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\n
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.csproj.CoreCompileInputs.cache
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.sourcelink.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\staticwebassets\msbuild.KontrolarCloud.Microsoft.AspNetCore.StaticWebAssets.props
@@ -85,4 +86,3 @@ C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\n
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.pdb
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.genruntimeconfig.cache
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\ref\KontrolarCloud.dll
-C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\KontrolarCloud\obj\Debug\net8.0\KontrolarCloud.sourcelink.json

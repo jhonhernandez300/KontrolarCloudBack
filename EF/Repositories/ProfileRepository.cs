@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace EF.Repositories
 {
-    public class ProfileRepository : BaseRepository<Profile>, IProfileRepository
+    public class ProfileRepository : SecondaryBaseRepository<Profile>, IProfileRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly SecondaryDbContext _context;
 
-        public ProfileRepository(ApplicationDbContext context) : base(context)
+        public ProfileRepository(SecondaryDbContext context) : base(context)
         {
             _context = context;
         }
