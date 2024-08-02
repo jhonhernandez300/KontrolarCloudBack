@@ -12,7 +12,7 @@ namespace Core
     {               
         IUserRepository Users { get; }
         ICompanyRepository Companies { get; }
-        ILastIdRepository LastIds { get; }
+        ILastIdsKTRL1Repository LastIdsKTRL1 { get; }
         IModuleRepository Modules { get; }
         IOptionRepository Options { get; }
         IOptionProfileRepository OptionsProfiles { get; }

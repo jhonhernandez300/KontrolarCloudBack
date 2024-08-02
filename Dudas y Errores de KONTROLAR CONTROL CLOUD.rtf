@@ -642,6 +642,63 @@ Microsoft.AspNetCore.Authentication.JwtBearer\f0\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
+\b Como implementar DTOs con automapper\par
+\b0 Usando Librer\'edas (Automapper)\par
+Automapper es una librer\'eda popular para mapear autom\'e1ticamente entre entidades y DTOs, lo que puede hacer tu c\'f3digo m\'e1s limpio y menos propenso a errores.\par
+\par
+2.1 Instalar Automapper\par
+Primero, instala el paquete Automapper a trav\'e9s de NuGet:\par
+\par
+bash\par
+Copiar c\'f3digo\par
+dotnet add package AutoMapper\par
+2.2 Configurar Automapper\par
+Crea un perfil de mapeo para configurar c\'f3mo se deben mapear las entidades a DTOs:\par
+\par
+csharp\par
+Copiar c\'f3digo\par
+public class MappingProfile : Profile\par
+\{\par
+    public MappingProfile()\par
+    \{\par
+        CreateMap<User, UserDTO>();\par
+        // Puedes agregar m\'e1s mapeos aqu\'ed\par
+    \}\par
+\}\par
+Luego, configura Automapper en Startup.cs:\par
+\par
+csharp\par
+Copiar c\'f3digo\par
+public void ConfigureServices(IServiceCollection services)\par
+\{\par
+    services.AddAutoMapper(typeof(Startup));\par
+    // Otras configuraciones\par
+\}\par
+2.3 Usar Automapper en los Controladores\par
+Inyecta IMapper en tus controladores y usa el mapeo:\par
+\par
+csharp\par
+Copiar c\'f3digo\par
+private readonly IMapper _mapper;\par
+\par
+public UsersController(IMapper mapper)\par
+\{\par
+    _mapper = mapper;\par
+\}\par
+\par
+[HttpGet("\{id\}")]\par
+public async Task<IActionResult> GetUser(int id)\par
+\{\par
+    var user = await _context.Users.FindAsync(id);\par
+    if (user == null)\par
+    \{\par
+        return NotFound();\par
+    \}\par
+\par
+    var userDTO = _mapper.Map<UserDTO>(user);\par
+    return Ok(userDTO);\par
+\}\par
+\par
 /////////////////////////////\par
 \par
 \cf0\fs22\lang10\par

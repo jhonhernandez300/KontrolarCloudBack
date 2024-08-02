@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface ILastIdRepository : IBaseRepository<LastId>
+    public interface ILastIdsKTRL1Repository : IBaseRepository<LastIdsKTRL1>
     {
-        LastId GetBigger(string tableName);
-        Task<LastId> GetBiggerAsync(string tableName);
+        LastIdsKTRL1 GetBigger(string tableName);
+        Task<LastIdsKTRL1> GetBiggerAsync(string tableName);
     }
 }

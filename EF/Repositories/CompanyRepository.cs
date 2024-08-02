@@ -37,7 +37,7 @@ namespace EF.Repositories
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SP_AdminUsers2";
+                    command.CommandText = "SP_AdminUsers";
                     command.CommandType = CommandType.StoredProcedure;
 
                     var optionParam = command.CreateParameter();

@@ -8,11 +8,11 @@ namespace KontrolarCloud.Controllers
     [Route("api/[controller]")]
     [EnableCors("AllowOrigins")]
     [ApiController]
-    public class LastIdController : Controller
+    public class LastIdsKTRL1Controller : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public LastIdController(IUnitOfWork unitOfWork)
+        public LastIdsKTRL1Controller(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -27,7 +27,7 @@ namespace KontrolarCloud.Controllers
                     return BadRequest("El parámetro tableName es requerido.");
                 }
 
-                var lastId = _unitOfWork.LastIds.GetAll()
+                var lastId = _unitOfWork.LastIdsKTRL1.GetAll()
                                                 .FirstOrDefault(l => l.TableName == tableName);
 
                 if (lastId == null)
@@ -44,16 +44,16 @@ namespace KontrolarCloud.Controllers
         }        
 
         [HttpPut("Update/{id}")]
-        public IActionResult Update(int id, [FromBody] LastId updatedLastId)
+        public IActionResult Update(int id, [FromBody] LastIdsKTRL1 updatedLastId)
         {
             try
             {
-                if (updatedLastId == null || updatedLastId.IdLastIds != id)
+                if (updatedLastId == null || updatedLastId.IdLastIdsKTRL1 != id)
                 {
                     return BadRequest(Json("Datos inválidos del LastId"));
                 }
 
-                var existingLastId = _unitOfWork.LastIds.GetById(id);
+                var existingLastId = _unitOfWork.LastIdsKTRL1.GetById(id);
 
                 if (existingLastId == null)
                 {
@@ -63,7 +63,7 @@ namespace KontrolarCloud.Controllers
                 existingLastId.TableName = updatedLastId.TableName;
                 existingLastId.Last = updatedLastId.Last;
 
-                _unitOfWork.LastIds.Update(existingLastId);
+                _unitOfWork.LastIdsKTRL1.Update(existingLastId);
                 _unitOfWork.Complete();
 
                 return Ok(Json(existingLastId));

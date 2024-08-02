@@ -42,7 +42,7 @@ builder.Services.AddDbContext<SecondaryDbContext>(options =>
 builder.Services.AddScoped<IBaseRepository<Company>, BaseRepository<Company>>();
 //builder.Services.AddScoped<IBaseRepository<UserCompany>, BaseRepository<UserCompany>>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-builder.Services.AddScoped<ILastIdRepository, LastIdRepository>();
+builder.Services.AddScoped<ILastIdsKTRL1Repository, LastIdsKTRL1Repository>();
 builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
 builder.Services.AddScoped<IOptionRepository, OptionRepository>();
 builder.Services.AddScoped<IOptionProfileRepository, OptionProfileRepository>();

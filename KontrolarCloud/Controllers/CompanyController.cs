@@ -115,7 +115,7 @@ namespace KontrolarCloud.Controllers
                 }
 
                 // Obtener el último ID usado para la tabla 'Company'
-                var lastIdRecord = _unitOfWork.LastIds.GetBigger("MT_Companies");
+                var lastIdRecord = _unitOfWork.LastIdsKTRL1.GetBigger("MT_Companies");
                                                     
 
                 if (lastIdRecord == null)
@@ -124,7 +124,7 @@ namespace KontrolarCloud.Controllers
                 }
 
                 // Generar el nuevo ID
-                int newId = lastIdRecord.Last + 1;
+                int newId = (int)(lastIdRecord.Last + 1);
 
                 // Asignar el nuevo ID a la entidad Company
                 company.IdCompany = newId;
@@ -135,7 +135,7 @@ namespace KontrolarCloud.Controllers
 
                 // Actualizar el registro en LastIds con el nuevo ID
                 lastIdRecord.Last = newId;
-                _unitOfWork.LastIds.Update(lastIdRecord);
+                _unitOfWork.LastIdsKTRL1.Update(lastIdRecord);
                 _unitOfWork.Complete();
 
                 return Ok(nuevaCompany);

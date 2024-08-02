@@ -29,6 +29,51 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [HttpPost("AddAsync")]
+        public async Task<IActionResult> AddAsync([FromBody] User user)
+        {
+            try
+            {
+                if (user == null)
+                {
+                    return BadRequest(Json("Datos inválidos del user"));
+                }
+
+                // Verificar si el IdentificationNumber ya existe en la base de datos
+                var existingUser = await _unitOfWork.Users.FindAsync(u => u.IdentificationNumber == user.IdentificationNumber);
+                if (existingUser != null)
+                {
+                    return Conflict("El número de identificación ya está en uso.");
+                }
+
+                // Consultar el último ID usado para la tabla User
+                var lastIdRecord = _unitOfWork.LastIdsKTRL1.GetBigger("MT_Users");
+
+                if (lastIdRecord == null)
+                {
+                    return StatusCode(500, Json("No se encontró un registro de Last (id) para la tabla User"));
+                }
+
+                long newUserId = lastIdRecord.Last + 1; // Cambiado a long
+                user.IdUser = (int)newUserId; // Convertir a int si es necesario
+
+                var nuevoUser = _unitOfWork.Users.Add(user);
+                _unitOfWork.Complete();
+
+                // Actualizar el modelo LastId con el nuevo ID
+                lastIdRecord.Last = newUserId;
+                _unitOfWork.LastIdsKTRL1.Update(lastIdRecord);
+                _unitOfWork.Complete();
+
+                return Ok(Json(nuevoUser));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
+            }
+        }
+
+
         [HttpGet("GetOptionsByIdUser/{encryptedIdUser}")]
         public async Task<IActionResult> GetOptionsByIdUser(string encryptedIdUser)
         {
@@ -243,44 +288,6 @@ namespace KontrolarCloud.Controllers
                 return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
             }
         }
-
-        [HttpPost("Add")]
-        public IActionResult Add([FromBody] User user)
-        {
-            try
-            {
-                if (user == null)
-                {
-                    return BadRequest(Json("Datos inválidos del user"));
-                }
-
-                // Consultar el último ID usado para la tabla User
-                var lastIdRecord = _unitOfWork.LastIds.GetBigger("MT_Users");
-
-                if (lastIdRecord == null)
-                {
-                    return StatusCode(500, Json("No se encontró un registro de Last (id) para la tabla User"));
-                }
-
-                int newUserId = lastIdRecord.Last + 1;
-                user.IdUser = newUserId;
-
-                var nuevoUser = _unitOfWork.Users.Add(user);
-                _unitOfWork.Complete();
-
-                // Actualizar el modelo LastId con el nuevo ID
-                lastIdRecord.Last = newUserId;
-                _unitOfWork.LastIds.Update(lastIdRecord);
-                _unitOfWork.Complete();
-
-                return Ok(Json(nuevoUser));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
-            }
-        }
-
 
     }
 }
