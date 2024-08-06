@@ -12,6 +12,9 @@ using System.Security.Claims;
 using System.Text;
 using EF;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using KontrolarCloud.DTOs;
+
 
 namespace KontrolarCloud.Controllers
 {
@@ -20,30 +23,61 @@ namespace KontrolarCloud.Controllers
     [ApiController]
     public class UserController : Controller
     {
+        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         public IConfiguration _configuration;
 
-        public UserController(IConfiguration configuration, IUnitOfWork unitOfWork)
+        public UserController(IConfiguration configuration, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _configuration = configuration;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpPost("AddAsync")]
-        public async Task<IActionResult> AddAsync([FromBody] User user)
+        public async Task<IActionResult> AddAsync([FromBody] string encryptedUser)
         {
             try
             {
-                if (user == null)
+                if (encryptedUser == null)
                 {
-                    return BadRequest(Json("Datos inválidos del user"));
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "El usuario encriptado es nulo"
+                    });
                 }
+
+                encryptedUser = Uri.UnescapeDataString(encryptedUser);
+
+                // Verificar si encryptedUser es una cadena Base64 válida
+                byte[] encryptedUserBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedUser);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "La cadena proporcionada no es válida en Base64"
+                    });
+                }
+
+                var decryptedUser = CryptoHelper.Decrypt(encryptedUser);
+                var deserialized = JsonConvert.DeserializeObject<UserDTO>(decryptedUser);
+                var user = _mapper.Map<Core.Models.User>(deserialized);
 
                 // Verificar si el IdentificationNumber ya existe en la base de datos
                 var existingUser = await _unitOfWork.Users.FindAsync(u => u.IdentificationNumber == user.IdentificationNumber);
                 if (existingUser != null)
                 {
-                    return Conflict("El número de identificación ya está en uso.");
+                    return StatusCode(500, new
+                    {
+                        success = false,
+                        message = "Ya existe ese número de identificación"
+                    });
                 }
 
                 // Consultar el último ID usado para la tabla User
@@ -51,7 +85,11 @@ namespace KontrolarCloud.Controllers
 
                 if (lastIdRecord == null)
                 {
-                    return StatusCode(500, Json("No se encontró un registro de Last (id) para la tabla User"));
+                    return StatusCode(500, new
+                    {
+                        success = false,
+                        message = "No se encontró un registro de Last (id) para la tabla Profile"
+                    });
                 }
 
                 long newUserId = lastIdRecord.Last + 1; // Cambiado a long
@@ -65,11 +103,15 @@ namespace KontrolarCloud.Controllers
                 _unitOfWork.LastIdsKTRL1.Update(lastIdRecord);
                 _unitOfWork.Complete();
 
-                return Ok(Json(nuevoUser));
+                return Ok(new
+                {
+                    success = true,
+                    message = "Registro agregado con exito"
+                }); ;
             }
             catch (Exception ex)
             {
-                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
+                return StatusCode(500, Json($"Error interno del servidor {ex.Message}"));
             }
         }
 

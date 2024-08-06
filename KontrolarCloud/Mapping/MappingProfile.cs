@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.Models;
 using KontrolarCloud.DTOs;
+using Core;
 
 namespace KontrolarCloud.Mapping
 {
@@ -8,7 +9,9 @@ namespace KontrolarCloud.Mapping
     {
         public MappingProfile()
         {
-            CreateMap< Core.Models.Profile, ProfileDTO>().ReverseMap();
+            CreateMap<ProfileDTO, Core.Models.Profile>()
+            .ForMember(dest => dest.UsersProfiles, opt => opt.Ignore())
+            .ForMember(dest => dest.OptionsProfiles, opt => opt.Ignore());
         }
     }
 }

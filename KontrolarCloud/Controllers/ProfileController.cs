@@ -7,6 +7,7 @@ using EF;
 using AutoMapper;
 using KontrolarCloud.DTOs;
 using System.Threading.Tasks;
+using EF.Utils;
 
 namespace KontrolarCloud.Controllers
 {
@@ -27,23 +28,41 @@ namespace KontrolarCloud.Controllers
         }
 
         [HttpPost("AddAsync")]
-        public async Task<IActionResult> AddAsync([FromBody] ProfileDTO profileDTO)
+        public async Task<IActionResult> AddAsync([FromBody] string encryptedProfile)
         {
             try
             {
-                if (profileDTO == null)
+                encryptedProfile = Uri.UnescapeDataString(encryptedProfile);
+
+                // Verificar si encryptedProfile son cadenas Base64 válidas
+                byte[] encryptedProfileBytes;
+                try
                 {
-                    return BadRequest(Json("Datos inválidos del profile"));
+                    encryptedProfileBytes = Convert.FromBase64String(encryptedProfile);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "La cadena proporcionada no es válida en Base64."
+                    });
                 }
 
-                var profile = _mapper.Map<Core.Models.Profile>(profileDTO); 
+                var decryptedProfile = CryptoHelper.Decrypt(encryptedProfile);
+                var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedProfile);
+                var profile = _mapper.Map<Core.Models.Profile>(deserialized);
 
                 // Consultar el último ID usado para la tabla Profile
                 var lastIdRecord = await _unitOfWork.LastIdsKTRL2.GetBiggerAsync("MT_Profiles");
 
                 if (lastIdRecord == null)
                 {
-                    return StatusCode(500, Json("No se encontró un registro de Last (id) para la tabla Profile"));
+                    return StatusCode(500, new
+                    {
+                        success = false,
+                        message = "No se encontró un registro de Last (id) para la tabla Profile."
+                    });
                 }
 
                 long newUserId = lastIdRecord.Last + 1;
@@ -56,13 +75,22 @@ namespace KontrolarCloud.Controllers
                 lastIdRecord.Last = newUserId;
                 _unitOfWork.LastIdsKTRL2.Update(lastIdRecord);
                 _unitOfWork.Complete();
-
-                return Ok(Json(nuevoProfile));
+                
+                return Ok(new
+                {
+                    success = true,
+                    message = "Registro agregado con éxito."                    
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = $"Error interno del servidor: {ex.Message}"
+                });
             }
         }
+
     }
 }
