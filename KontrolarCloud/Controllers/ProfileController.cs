@@ -45,13 +45,24 @@ namespace KontrolarCloud.Controllers
                     return BadRequest(new
                     {
                         success = false,
-                        message = "La cadena proporcionada no es válida en Base64."
+                        message = "La cadena proporcionada no es válida en Base64"
                     });
                 }
 
                 var decryptedProfile = CryptoHelper.Decrypt(encryptedProfile);
                 var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedProfile);
                 var profile = _mapper.Map<Core.Models.Profile>(deserialized);
+
+                // Verificar si el CodProfile ya existe en la base de datos
+                var existing = await _unitOfWork.Profiles.FindAsync(u => u.CodProfile == profile.CodProfile);
+                if (existing != null)
+                {
+                    return StatusCode(500, new
+                    {
+                        success = false,
+                        message = "Ya existe ese Código de Perfil"
+                    });
+                }
 
                 // Consultar el último ID usado para la tabla Profile
                 var lastIdRecord = await _unitOfWork.LastIdsKTRL2.GetBiggerAsync("MT_Profiles");
@@ -61,7 +72,7 @@ namespace KontrolarCloud.Controllers
                     return StatusCode(500, new
                     {
                         success = false,
-                        message = "No se encontró un registro de Last (id) para la tabla Profile."
+                        message = "No se encontró un registro de Last (id) para la tabla Profile"
                     });
                 }
 
@@ -79,7 +90,7 @@ namespace KontrolarCloud.Controllers
                 return Ok(new
                 {
                     success = true,
-                    message = "Registro agregado con éxito."                    
+                    message = "Registro agregado con exito"                    
                 });
             }
             catch (Exception ex)
@@ -87,7 +98,7 @@ namespace KontrolarCloud.Controllers
                 return StatusCode(500, new
                 {
                     success = false,
-                    message = $"Error interno del servidor: {ex.Message}"
+                    message = $"Error interno del servidor {ex.Message}"
                 });
             }
         }
