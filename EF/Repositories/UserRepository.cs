@@ -23,6 +23,14 @@ namespace EF.Repositories
             _secondaryContext = secondaryContext;
         }
 
+        public Task<List<User>> GetUserByParam(string param)
+        {
+            return _context.Users
+                    .Where(u => u.IdentificationNumber.Contains(param) ||
+                                u.Names.Contains(param) ||
+                                u.Surnames.Contains(param)).ToListAsync();
+        }
+
         public async Task<(
             List<ModuleDTO> moduleOptionDTOs, 
             string message, 

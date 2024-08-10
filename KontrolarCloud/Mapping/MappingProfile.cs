@@ -12,6 +12,7 @@ namespace KontrolarCloud.Mapping
             CreateMap<ProfileDTO, Core.Models.Profile>()
             .ForMember(dest => dest.UsersProfiles, opt => opt.Ignore())
             .ForMember(dest => dest.OptionsProfiles, opt => opt.Ignore());
+            CreateMap<User, UserDTO>();
         }
     }
 }
