@@ -90,7 +90,6 @@ namespace KontrolarCloud.Controllers
             }
         }
 
-
         [HttpGet("GetUserByParam/{encryptedParam}")]
         public async Task<IActionResult> GetUserByParam(string encryptedParam)
         {

@@ -27,6 +27,62 @@ namespace KontrolarCloud.Controllers
             _mapper = mapper;
         }
 
+        [HttpPut("DisableProfile")]
+        public async Task<IActionResult> DisableProfile([FromBody] string encryptedProfileDto)
+        {
+            try
+            {
+                if (encryptedProfileDto == null)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "El usuario encriptado es nulo"
+                    });
+                }
+
+                encryptedProfileDto = Uri.UnescapeDataString(encryptedProfileDto);
+
+                // Verificar si es cadena Base64 válida
+                byte[] encryptedProfileBytes;
+                try
+                {
+                    encryptedProfileBytes = Convert.FromBase64String(encryptedProfileDto);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "La cadena proporcionada no es válida en Base64"
+                    });
+                }
+
+                var decryptedParam = CryptoHelper.Decrypt(encryptedProfileDto);
+                var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedParam);
+                var profile = _mapper.Map<Core.Models.Profile>(deserialized);
+                profile.IsDisabled = true;
+
+                _unitOfWork.Profiles.Update(profile);
+                var result = await _unitOfWork.CompleteAsync();
+
+                if (result > 0)
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "Registro borrado con exito" //En realidad se desactiva
+                    });
+                }
+                else
+                    return StatusCode(500, "An error occurred while updating the user");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message} - StackTrace: {ex.StackTrace}");
+            }
+        }
+
         [HttpGet("GetProfilesByParam/{encryptedParam}")]
         public async Task<IActionResult> GetProfilesByParam(string encryptedParam)
         {
