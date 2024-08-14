@@ -11,6 +11,6 @@ namespace Core.Interfaces
     public interface IUserRepository : IBaseRepository<User>
     {
         Task<(List<ModuleDTO> moduleOptionDTOs, string message, bool operationExecuted)> ProfileGetOptions(int idUser);
-        Task<List<User>> GetUserByParam(string param);
+        Task<List<User>> GetUsersByParam(string param);
     }
 }

@@ -3,10 +3,11 @@
 {\*\generator Riched20 10.0.22621}\viewkind4\uc1 
 \pard\sa200\sl276\slmult1\qc\f0\fs36\lang10 Dudas y Errores de KONTROLAR CONTROL CLOUD\fs22\par
 
-\pard\sl240\slmult1\par
-///////////////////////////////////\par
+\pard\sl240\slmult1 1\par
+///////////////////////////////////         1\par
 \par
-\b A veces es necesario para que EF sepa como son las relaciones\b0\par
+\b A veces es necesario para que EF sepa como son las relaciones\par
+modelBuilder, pk, clave primaria, relaci\'f3n uno a muchos\b0\par
 \cf1\fs19 protected override void OnModelCreating(ModelBuilder modelBuilder)\par
 \{\par
     modelBuilder.Entity<UserCompany>()\par
@@ -49,7 +50,7 @@ public class Company\par
     \b public ICollection<UserCompany> UserCompanies \{ get; set; \} = new List<UserCompany>();\b0\par
 \}\par
 \par
-\lang9226 /////////////////////////////\par
+\lang9226 /////////////////////////////      1\par
 \par
 \b Agregar un registro usando la tabla que guarda el \'faltimo id\par
 \b0 [HttpPost("Add")]\par

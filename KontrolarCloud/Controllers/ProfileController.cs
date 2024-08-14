@@ -27,6 +27,34 @@ namespace KontrolarCloud.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("GetProfilesByParam/{encryptedParam}")]
+        public async Task<IActionResult> GetProfilesByParam(string encryptedParam)
+        {
+            try
+            {
+                //encryptedParam = Uri.UnescapeDataString(encryptedParam);
+
+                //// Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
+                //byte[] encryptedUserBytes;
+                //try
+                //{
+                //    encryptedUserBytes = Convert.FromBase64String(encryptedParam);
+                //}
+                //catch (FormatException)
+                //{
+                //    return BadRequest("Una o ambas cadenas proporcionadas no son válidas en Base64");
+                //}
+
+                //var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
+                var userList = await _unitOfWork.Profiles.GetProfilesByParam(encryptedParam.Replace("\"", ""));
+                return Ok(userList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
+            }
+        }
+
         [HttpPost("AddAsync")]
         public async Task<IActionResult> AddAsync([FromBody] string encryptedProfile)
         {

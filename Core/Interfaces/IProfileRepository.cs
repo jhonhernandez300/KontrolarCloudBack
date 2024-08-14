@@ -10,6 +10,6 @@ namespace Core.Interfaces
 {
     public interface IProfileRepository : IBaseRepository<Profile>
     {
-        
+        Task<List<Profile>> GetProfilesByParam(string param);
     }
 }

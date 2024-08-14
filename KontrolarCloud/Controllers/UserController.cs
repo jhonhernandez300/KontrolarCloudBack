@@ -33,6 +33,63 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+        
+        [HttpPut("DisableUser")]
+        public async Task<IActionResult> DisableUser([FromBody] string encryptedUserDto)
+        {
+            try
+            {
+                if (encryptedUserDto == null) 
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "El usuario encriptado es nulo"
+                    });
+                }                
+
+                encryptedUserDto = Uri.UnescapeDataString(encryptedUserDto);
+
+                // Verificar si es cadena Base64 válida
+                byte[] encryptedUserBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedUserDto);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "La cadena proporcionada no es válida en Base64"
+                    });
+                }
+
+                var decryptedParam = CryptoHelper.Decrypt(encryptedUserDto);
+                var deserialized = JsonConvert.DeserializeObject<UserDTO>(decryptedParam);
+                var user = _mapper.Map<User>(deserialized);
+                user.IsDisabled = true;             
+
+                _unitOfWork.Users.Update(user);                
+                var result = await _unitOfWork.CompleteAsync();
+
+                if (result > 0)
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "Registro borrado con exito"
+                    });
+                }                
+                else
+                    return StatusCode(500, "An error occurred while updating the user");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message} - StackTrace: {ex.StackTrace}");
+            }
+        }
+
 
         [HttpGet("GetUserByParam/{encryptedParam}")]
         public async Task<IActionResult> GetUserByParam(string encryptedParam)
@@ -53,7 +110,7 @@ namespace KontrolarCloud.Controllers
                 }
 
                 var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
-                var userList = await _unitOfWork.Users.GetUserByParam(decryptedParam.Replace("\"", ""));
+                var userList = await _unitOfWork.Users.GetUsersByParam(decryptedParam.Replace("\"", ""));
                 return Ok(userList);
             }
             catch (Exception ex)
@@ -135,7 +192,7 @@ namespace KontrolarCloud.Controllers
                 {
                     success = true,
                     message = "Registro agregado con exito"
-                }); ;
+                }); 
             }
             catch (Exception ex)
             {

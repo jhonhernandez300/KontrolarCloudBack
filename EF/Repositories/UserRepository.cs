@@ -23,7 +23,7 @@ namespace EF.Repositories
             _secondaryContext = secondaryContext;
         }
 
-        public Task<List<User>> GetUserByParam(string param)
+        public Task<List<User>> GetUsersByParam(string param)
         {
             return _context.Users
                     .Where(u => u.IdentificationNumber.Contains(param) ||
