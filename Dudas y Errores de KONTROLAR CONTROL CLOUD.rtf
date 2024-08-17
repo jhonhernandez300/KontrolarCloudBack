@@ -1,5 +1,5 @@
-{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil Cascadia Mono;}{\f2\fnil\fcharset0 Cascadia Mono;}}
-{\colortbl ;\red0\green0\blue0;\red255\green255\blue0;\red46\green117\blue182;\red163\green21\blue21;\red0\green128\blue0;\red0\green0\blue255;}
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil Cascadia Mono;}{\f2\fnil\fcharset0 Cascadia Mono;}{\f3\fnil Consolas;}}
+{\colortbl ;\red0\green0\blue0;\red255\green255\blue0;\red46\green117\blue182;\red163\green21\blue21;\red0\green128\blue0;\red0\green0\blue255;\red128\green128\blue128;}
 {\*\generator Riched20 10.0.22621}\viewkind4\uc1 
 \pard\sa200\sl276\slmult1\qc\f0\fs36\lang10 Dudas y Errores de KONTROLAR CONTROL CLOUD\fs22\par
 
@@ -845,9 +845,15 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));\par
 \par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
-\par
+\b Agregar un campo a una tabla SQL\b0\par
+\cf6\f3 ALTER\cf1  \cf6 TABLE\cf1  [dbo]\cf7 .\cf1 [MT_Profiles]\par
+\cf6 ADD\cf1  IsDisabled \cf6 bit\cf7 ;\cf1\par
+\f0\par
 /////////////////////////////\par
 \par
+\b Agregar un valor por defecto para un campo SQL\b0\par
+\cf6\f3 ALTER\cf1  \cf6 TABLE\cf1  [dbo]\cf7 .\cf1 [MT_Profiles]\par
+\cf6 ADD\cf1  \cf6 CONSTRAINT\cf1  DF_MT_Profiles_IsDisabled \cf6 DEFAULT\cf1  0 \cf6 FOR\cf1  IsDisabled\cf7 ;\cf1\f0\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par

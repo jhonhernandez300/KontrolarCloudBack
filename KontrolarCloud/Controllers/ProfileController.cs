@@ -27,6 +27,7 @@ namespace KontrolarCloud.Controllers
             _mapper = mapper;
         }
 
+      
         [HttpPut("DisableProfile")]
         public async Task<IActionResult> DisableProfile([FromBody] string encryptedProfileDto)
         {
@@ -88,21 +89,21 @@ namespace KontrolarCloud.Controllers
         {
             try
             {
-                //encryptedParam = Uri.UnescapeDataString(encryptedParam);
+                encryptedParam = Uri.UnescapeDataString(encryptedParam);
 
-                //// Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
-                //byte[] encryptedUserBytes;
-                //try
-                //{
-                //    encryptedUserBytes = Convert.FromBase64String(encryptedParam);
-                //}
-                //catch (FormatException)
-                //{
-                //    return BadRequest("Una o ambas cadenas proporcionadas no son válidas en Base64");
-                //}
+                // Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
+                byte[] encryptedUserBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedParam);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest("Una o ambas cadenas proporcionadas no son válidas en Base64");
+                }
 
-                //var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
-                var userList = await _unitOfWork.Profiles.GetProfilesByParam(encryptedParam.Replace("\"", ""));
+                var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
+                var userList = await _unitOfWork.Profiles.GetProfilesByParam(decryptedParam.Replace("\"", ""));
                 return Ok(userList);
             }
             catch (Exception ex)

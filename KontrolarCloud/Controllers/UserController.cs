@@ -33,7 +33,73 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        
+
+        [HttpPut("Update")]
+        public IActionResult Update([FromBody] string encryptedUserDto)        
+        {
+            try
+            {
+                if (encryptedUserDto == null)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "El usuario encriptado es nulo"
+                    });
+                }
+
+                encryptedUserDto = Uri.UnescapeDataString(encryptedUserDto);
+
+                // Verificar si es cadena Base64 válida
+                byte[] encryptedUserBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedUserDto);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "La cadena proporcionada no es válida en Base64"
+                    });
+                }
+
+                var decryptedParam = CryptoHelper.Decrypt(encryptedUserDto);
+                var deserialized = JsonConvert.DeserializeObject<UserDTO>(decryptedParam);
+                var user = _mapper.Map<User>(deserialized);
+
+                var existingUser = _unitOfWork.Users.GetById(user.IdUser);
+
+                if (existingUser == null)
+                {
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = "No encontrado"
+                    });                    
+                }
+
+                existingUser.IdentificationNumber = user.IdentificationNumber;
+                existingUser.Names = user.Names;
+                existingUser.Surnames = user.Surnames;
+                existingUser.UserMaster = user.UserMaster;
+
+                _unitOfWork.Users.Update(existingUser);
+                _unitOfWork.Complete();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Registro actualizado con exito"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
+            }
+        }
+
         [HttpPut("DisableUser")]
         public async Task<IActionResult> DisableUser([FromBody] string encryptedUserDto)
         {
@@ -348,38 +414,7 @@ namespace KontrolarCloud.Controllers
             {
                 return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
             }
-        }
-
-        [HttpPut("Update/{id}")]
-        public IActionResult Update(int id, [FromBody] User updatedUser)
-        {
-            try
-            {
-                if (updatedUser == null || updatedUser.IdUser != id)
-                {
-                    return BadRequest(Json("Datos inválidos del user"));
-                }
-
-                var existingUser = _unitOfWork.Users.GetById(id);
-
-                if (existingUser == null)
-                {
-                    return NotFound(Json("User no encontrado"));
-                }
-
-                existingUser.IdentificationNumber = updatedUser.IdentificationNumber;
-                existingUser.Surnames = updatedUser.Surnames;             
-
-                _unitOfWork.Users.Update(existingUser);
-                _unitOfWork.Complete();
-
-                return Ok(Json(existingUser));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
-            }
-        }
+        }        
 
         [HttpGet("GetById/{id}")]
         public IActionResult GetById(int id)
