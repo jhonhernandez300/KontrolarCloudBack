@@ -26,7 +26,72 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-      
+
+        [HttpPut("Update")]
+        public IActionResult Update([FromBody] string encryptedProfileDto)
+        {
+            try
+            {
+                if (encryptedProfileDto == null)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "El perfil encriptado es nulo"
+                    });
+                }
+
+                encryptedProfileDto = Uri.UnescapeDataString(encryptedProfileDto);
+
+                // Verificar si es cadena Base64 válida
+                byte[] encryptedUserBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedProfileDto);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "La cadena no es válida en Base64"
+                    });
+                }
+
+                var decryptedParam = CryptoHelper.Decrypt(encryptedProfileDto);
+                var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedParam);
+                var profile = _mapper.Map<Core.Models.Profile>(deserialized);
+
+                var existingProfile = _unitOfWork.Profiles.GetById(profile.IdProfile);
+
+                if (existingProfile == null)
+                {
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = "No encontrado"
+                    });
+                }
+
+                existingProfile.CodProfile = profile.CodProfile;
+                existingProfile.NameProfile = profile.NameProfile;
+                existingProfile.Description = profile.Description;
+
+                _unitOfWork.Profiles.Update(existingProfile);
+                _unitOfWork.Complete();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Registro actualizado con exito"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
+            }
+        }
+
         [HttpPut("DisableProfile")]
         public async Task<IActionResult> DisableProfile([FromBody] string encryptedProfileDto)
         {
