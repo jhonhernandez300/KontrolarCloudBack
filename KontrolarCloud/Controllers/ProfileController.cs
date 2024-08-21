@@ -26,7 +26,6 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-
       
         [HttpPut("DisableProfile")]
         public async Task<IActionResult> DisableProfile([FromBody] string encryptedProfileDto)
@@ -61,8 +60,7 @@ namespace KontrolarCloud.Controllers
 
                 var decryptedParam = CryptoHelper.Decrypt(encryptedProfileDto);
                 var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedParam);
-                var profile = _mapper.Map<Core.Models.Profile>(deserialized);
-                profile.IsDisabled = true;
+                var profile = _mapper.Map<Core.Models.Profile>(deserialized);                
 
                 _unitOfWork.Profiles.Update(profile);
                 var result = await _unitOfWork.CompleteAsync();

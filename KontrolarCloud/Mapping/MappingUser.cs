@@ -11,8 +11,7 @@ namespace KontrolarCloud.Mapping
         {
             CreateMap<UserDTO, Core.Models.User>()
             .ForMember(dest => dest.UserCompanies, opt => opt.Ignore())
-            .ForMember(dest => dest.UsersProfiles, opt => opt.Ignore())
-            .ForMember(dest => dest.IsDisabled, opt => opt.Ignore());
+            .ForMember(dest => dest.UsersProfiles, opt => opt.Ignore());            
         }
     }
 }

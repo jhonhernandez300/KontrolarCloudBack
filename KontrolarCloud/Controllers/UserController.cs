@@ -82,8 +82,7 @@ namespace KontrolarCloud.Controllers
 
                 existingUser.IdentificationNumber = user.IdentificationNumber;
                 existingUser.Names = user.Names;
-                existingUser.Surnames = user.Surnames;
-                existingUser.UserMaster = user.UserMaster;
+                existingUser.Surnames = user.Surnames;                
 
                 _unitOfWork.Users.Update(existingUser);
                 _unitOfWork.Complete();
@@ -133,8 +132,7 @@ namespace KontrolarCloud.Controllers
 
                 var decryptedParam = CryptoHelper.Decrypt(encryptedUserDto);
                 var deserialized = JsonConvert.DeserializeObject<UserDTO>(decryptedParam);
-                var user = _mapper.Map<User>(deserialized);
-                user.IsDisabled = true;             
+                var user = _mapper.Map<User>(deserialized);                        
 
                 _unitOfWork.Users.Update(user);                
                 var result = await _unitOfWork.CompleteAsync();
@@ -244,6 +242,7 @@ namespace KontrolarCloud.Controllers
 
                 long newUserId = lastIdRecord.Last + 1; // Cambiado a long
                 user.IdUser = (int)newUserId; // Convertir a int si es necesario
+                user.UserMaster = false;
 
                 var nuevoUser = _unitOfWork.Users.Add(user);
                 _unitOfWork.Complete();
@@ -264,7 +263,6 @@ namespace KontrolarCloud.Controllers
                 return StatusCode(500, Json($"Error interno del servidor {ex.Message}"));
             }
         }
-
 
         [HttpGet("GetOptionsByIdUser/{encryptedIdUser}")]
         public async Task<IActionResult> GetOptionsByIdUser(string encryptedIdUser)
