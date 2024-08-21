@@ -61,7 +61,7 @@ namespace KontrolarCloud.Controllers
                     return BadRequest(new
                     {
                         success = false,
-                        message = "La cadena proporcionada no es válida en Base64"
+                        message = "No es valida en Base64"
                     });
                 }
 
@@ -126,7 +126,7 @@ namespace KontrolarCloud.Controllers
                     return BadRequest(new
                     {
                         success = false,
-                        message = "La cadena proporcionada no es válida en Base64"
+                        message = "No es valida en Base64"
                     });
                 }
 
@@ -146,7 +146,7 @@ namespace KontrolarCloud.Controllers
                     });
                 }                
                 else
-                    return StatusCode(500, "An error occurred while updating the user");
+                    return StatusCode(500, "Error updating");
             }
             catch (Exception ex)
             {
@@ -169,7 +169,7 @@ namespace KontrolarCloud.Controllers
                 }
                 catch (FormatException)
                 {
-                    return BadRequest("Una o ambas cadenas proporcionadas no son válidas en Base64");
+                    return BadRequest("No es valida en Base64");
                 }
 
                 var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
@@ -209,7 +209,7 @@ namespace KontrolarCloud.Controllers
                     return BadRequest(new
                     {
                         success = false,
-                        message = "La cadena proporcionada no es válida en Base64"
+                        message = "No es valida en Base64"
                     });
                 }
 
@@ -236,7 +236,7 @@ namespace KontrolarCloud.Controllers
                     return StatusCode(500, new
                     {
                         success = false,
-                        message = "No se encontró un registro de Last (id) para la tabla Profile"
+                        message = "Last (id) no encontrado"
                     });
                 }
 
@@ -279,7 +279,7 @@ namespace KontrolarCloud.Controllers
                 }
                 catch (FormatException)
                 {
-                    return BadRequest("Una o ambas cadenas proporcionadas no son válidas en Base64.");
+                    return BadRequest("No es valida en Base64");
                 }
 
                 var decryptedIdUser = CryptoHelper.Decrypt(encryptedIdUser);
@@ -367,7 +367,7 @@ namespace KontrolarCloud.Controllers
                 }
                 catch (FormatException)
                 {
-                    return BadRequest("La cadena proporcionada no es una cadena Base64 válida.");
+                    return BadRequest("No es valida en Base64");
                 }
 
                 var IdentificationNumber = CryptoHelper.Decrypt(encryptedIdentificationNumber);
@@ -400,7 +400,7 @@ namespace KontrolarCloud.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(Json("El user con el Id especificado no existe o no se pudo eliminar."));
+                    return NotFound(Json("No encontrado"));
                 }
 
                 _unitOfWork.Users.Delete(user);
@@ -423,7 +423,7 @@ namespace KontrolarCloud.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(Json("User no encontrado"));
+                    return NotFound(Json("No encontrado"));
                 }
                 return Ok(Json(user));
             }
