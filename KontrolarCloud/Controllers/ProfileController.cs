@@ -8,6 +8,8 @@ using AutoMapper;
 using KontrolarCloud.DTOs;
 using System.Threading.Tasks;
 using EF.Utils;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace KontrolarCloud.Controllers
 {
@@ -92,8 +94,8 @@ namespace KontrolarCloud.Controllers
             }
         }
 
-        [HttpPut("DisableProfile")]
-        public async Task<IActionResult> DisableProfile([FromBody] string encryptedProfileDto)
+        [HttpDelete("DeleteProfile")]
+        public async Task<IActionResult> DeleteProfile([FromBody] string encryptedProfileDto)
         {
             try
             {
@@ -102,17 +104,17 @@ namespace KontrolarCloud.Controllers
                     return BadRequest(new
                     {
                         success = false,
-                        message = "El usuario encriptado es nulo"
+                        message = "El profile encriptado es nulo"
                     });
                 }
 
                 encryptedProfileDto = Uri.UnescapeDataString(encryptedProfileDto);
 
                 // Verificar si es cadena Base64 válida
-                byte[] encryptedProfileBytes;
+                byte[] encryptedUserBytes;
                 try
                 {
-                    encryptedProfileBytes = Convert.FromBase64String(encryptedProfileDto);
+                    encryptedUserBytes = Convert.FromBase64String(encryptedProfileDto);
                 }
                 catch (FormatException)
                 {
@@ -125,9 +127,22 @@ namespace KontrolarCloud.Controllers
 
                 var decryptedParam = CryptoHelper.Decrypt(encryptedProfileDto);
                 var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedParam);
-                var profile = _mapper.Map<Core.Models.Profile>(deserialized);                
+                var profile = _mapper.Map<Core.Models.Profile>(deserialized);
 
-                _unitOfWork.Profiles.Update(profile);
+                var exists = _unitOfWork.Profiles.GetById(profile.IdProfile);
+
+                if (exists == null)
+                {
+                    //return NotFound(Json("No encontrado"));
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = "No encontrado"
+                    });
+                }
+                
+                //No funciona con el profile q viene en la petición, por eso se puso el q él encuentra
+                _unitOfWork.Profiles.Delete(exists);
                 var result = await _unitOfWork.CompleteAsync();
 
                 if (result > 0)
@@ -135,14 +150,26 @@ namespace KontrolarCloud.Controllers
                     return Ok(new
                     {
                         success = true,
-                        message = "Registro borrado con exito" //En realidad se desactiva
+                        message = "Registro borrado con exito"
                     });
                 }
                 else
-                    return StatusCode(500, "An error occurred while updating the user");
+                    return StatusCode(500, "Error deleting");
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+            {
+                // Código de error SQL 547 indica una violación de la restricción de clave externa
+                Console.WriteLine($"Error de integridad referencial: {sqlEx.Message}");
+                return Conflict(new
+                {
+                    success = false,
+                    message = "El registro está relacionado"
+                });
             }
             catch (Exception ex)
             {
+                // Manejo general de excepciones
+                Console.WriteLine($"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
                 return StatusCode(500, $"Internal server error: {ex.Message} - StackTrace: {ex.StackTrace}");
             }
         }

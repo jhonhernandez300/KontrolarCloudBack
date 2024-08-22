@@ -14,6 +14,7 @@ using EF;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using KontrolarCloud.DTOs;
+using Microsoft.Data.SqlClient;
 
 
 namespace KontrolarCloud.Controllers
@@ -98,20 +99,20 @@ namespace KontrolarCloud.Controllers
                 return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
             }
         }
-
-        [HttpPut("DisableUser")]
-        public async Task<IActionResult> DisableUser([FromBody] string encryptedUserDto)
+                
+        [HttpDelete("DeleteUser")]
+        public async Task<IActionResult> DeleteUser([FromBody] string encryptedUserDto) 
         {
             try
             {
-                if (encryptedUserDto == null) 
+                if (encryptedUserDto == null)
                 {
                     return BadRequest(new
                     {
                         success = false,
                         message = "El usuario encriptado es nulo"
                     });
-                }                
+                }
 
                 encryptedUserDto = Uri.UnescapeDataString(encryptedUserDto);
 
@@ -132,9 +133,24 @@ namespace KontrolarCloud.Controllers
 
                 var decryptedParam = CryptoHelper.Decrypt(encryptedUserDto);
                 var deserialized = JsonConvert.DeserializeObject<UserDTO>(decryptedParam);
-                var user = _mapper.Map<User>(deserialized);                        
+                var user = _mapper.Map<User>(deserialized);
 
-                _unitOfWork.Users.Update(user);                
+                var exists = _unitOfWork.Users.GetById(user.IdUser);
+
+                if (exists == null)
+                {
+                    //return NotFound(Json("No encontrado"));
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = "No encontrado"
+                    });
+                }
+
+                //user.IdUser = 63;
+                //user.IdUser = (int)user.IdUser;
+                //No funciona con el user q viene en la petición, por eso se puso el q él encuentra
+                _unitOfWork.Users.Delete(exists);
                 var result = await _unitOfWork.CompleteAsync();
 
                 if (result > 0)
@@ -144,15 +160,28 @@ namespace KontrolarCloud.Controllers
                         success = true,
                         message = "Registro borrado con exito"
                     });
-                }                
+                }
                 else
-                    return StatusCode(500, "Error updating");
+                    return StatusCode(500, "Error deleting");
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+            {
+                // Código de error SQL 547 indica una violación de la restricción de clave externa
+                Console.WriteLine($"Error de integridad referencial: {sqlEx.Message}");
+                return Conflict(new
+                {
+                    success = false,
+                    message = "El registro está relacionado"
+                });
             }
             catch (Exception ex)
             {
+                // Manejo general de excepciones
+                Console.WriteLine($"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
                 return StatusCode(500, $"Internal server error: {ex.Message} - StackTrace: {ex.StackTrace}");
             }
         }
+
 
         [HttpGet("GetUserByParam/{encryptedParam}")]
         public async Task<IActionResult> GetUserByParam(string encryptedParam)
