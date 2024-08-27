@@ -15,8 +15,7 @@ namespace Core.Models
         public int IdProfile { get; set; }
         public required string CodProfile { get; set; }
         public required string NameProfile { get; set; }
-        public required string Description { get; set; }
-        public bool IsDisabled { get; set; }
+        public required string Description { get; set; }     
 
         public ICollection<UserProfile> UsersProfiles { get; set; } = new List<UserProfile>();
         public ICollection<OptionProfile> OptionsProfiles { get; set; } = new List<OptionProfile>();

@@ -27,19 +27,90 @@ namespace KontrolarCloud.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         public IConfiguration _configuration;
+        private ApplicationDbContext _context;
 
-        public UserController(IConfiguration configuration, IUnitOfWork unitOfWork, IMapper mapper)
+        public UserController(IConfiguration configuration, IUnitOfWork unitOfWork, IMapper mapper, ApplicationDbContext context)
         {
             _configuration = configuration;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _context = context;
         }
+
+        public bool IsValidToken(string token)
+        {
+            //if (string.IsNullOrEmpty(encryptedToken)) { return false; }
+
+            try
+            {
+                //encryptedToken = Uri.UnescapeDataString(encryptedToken);
+
+                // Verificar si es cadena Base64 válida
+                //byte[] encryptedUserBytes;
+                //try
+                //{
+                //    encryptedUserBytes = Convert.FromBase64String(encryptedToken);
+                //}
+                //catch (FormatException)
+                //{
+                //    return false;
+                //}
+
+                //string decrypted = CryptoHelper.Decrypt(encryptedToken);
+                //string deserialized = (string)JsonConvert.DeserializeObject(decrypted);
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = _configuration["Jwt:Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var identity = new ClaimsIdentity(jwtToken.Claims);
+                bool valid = Jwt.CheckToken(identity, _context);
+
+                if (!valid)
+                {
+                    return false;
+                }
+
+                var iatClaim = identity.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Iat);
+                if (iatClaim != null)
+                {
+                    var tokenCreationTime = DateTime.Parse(iatClaim.Value);
+                    if (DateTime.UtcNow > tokenCreationTime.AddMinutes(20))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
 
         [HttpPut("Update")]
         public IActionResult Update([FromBody] string encryptedUserDto)        
         {
             try
             {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                var tokenValid = IsValidToken(token);
+
                 if (encryptedUserDto == null)
                 {
                     return BadRequest(new
@@ -371,10 +442,13 @@ namespace KontrolarCloud.Controllers
 
                 var response = new JwtSecurityTokenHandler().WriteToken(token);
 
+                byte[] bytesToEncode = Encoding.UTF8.GetBytes(response);
+                string encodedString = Convert.ToBase64String(bytesToEncode);
+
                 var tokenJson = JsonConvert.SerializeObject(response);
                 var encryptedToken = CryptoHelper.Encrypt(tokenJson);
 
-                return encryptedToken;
+                return tokenJson;
             }
             catch (Exception ex)
             {
