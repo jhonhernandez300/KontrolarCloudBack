@@ -38,19 +38,34 @@ namespace KontrolarCloud.Controllers
             _context = context;
         }
 
-        public string IsValidToken(string token)
+        public string IsValidToken(string encryptedToken)
         {
+            var cleaned = encryptedToken.Replace("\"", "");
+            // Verificar si es cadena Base64 válida
+            byte[] encryptedUserBytes;
+            try
+            {
+                encryptedUserBytes = Convert.FromBase64String(cleaned);
+            }
+            catch (FormatException)
+            {
+                return "No es valida en Base64";
+            }
+
+            var decryptedParam = CryptoHelper.Decrypt(cleaned);
+            var deserialized = JsonConvert.DeserializeObject(decryptedParam);
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
 
-            if (!tokenHandler.CanReadToken(token))
+            if (!tokenHandler.CanReadToken((string)deserialized))
             {
                 return "Token not on JWT format";
             }
 
             try
             {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                tokenHandler.ValidateToken((string)deserialized, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -76,14 +91,14 @@ namespace KontrolarCloud.Controllers
             try
             {
                 var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");                
-                var tokenValid = IsValidToken(token);
+                var messagetokenValid = IsValidToken(token);
 
-                if (tokenValid != "true")
+                if (messagetokenValid != "true")
                 {
-                    return BadRequest(new
+                    return Unauthorized(new
                     {
                         success = false,
-                        message = "Token no valido"
+                        message = messagetokenValid
                     });
                 }
 
