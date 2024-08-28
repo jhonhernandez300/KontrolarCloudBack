@@ -1,6 +1,7 @@
 ﻿using Core.DTO;
 using Core.Interfaces;
 using Core.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -37,98 +38,69 @@ namespace EF.Repositories
             bool operationExecuted
          )> ProfileGetOptions(int idUser)
         {
-            var modules = new List<ModuleDTO>();
-            string message = "";
-            bool operationExecuted = false;
+            var userProfile = await _secondaryContext.UsersProfiles.FirstOrDefaultAsync(x => x.IdUser == idUser);
 
-            var conn = _secondaryContext.Database.GetDbConnection();
-
-            try
+            var messageParam = new SqlParameter("@Message", SqlDbType.VarChar, -1)
             {
-                await conn.OpenAsync();
+                Direction = ParameterDirection.Output
+            };
 
-                using (var command = conn.CreateCommand())
+            var operationExecutedParam = new SqlParameter("@OperationExecuted", SqlDbType.Bit)
+            {
+                Direction = ParameterDirection.Output
+            };
+
+            string sqlQuery = "EXEC [dbo].[SP_ProfileGetOptions] @IdUser, @IdProfile, @Message OUTPUT, @OperationExecuted OUTPUT";
+
+            var moduleDtos = new List<ModuleDTO>();
+            using (var command = _secondaryContext.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = sqlQuery;
+                command.Parameters.Add(new SqlParameter("@IdUser", idUser));
+                command.Parameters.Add(new SqlParameter("@IdProfile", userProfile?.IdProfile));
+                command.Parameters.Add(messageParam);
+                command.Parameters.Add(operationExecutedParam);
+
+                _secondaryContext.Database.OpenConnection();
+                using (var result = await command.ExecuteReaderAsync())
                 {
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.CommandText = "SP_AdminProfiles";
-
-                    var param1 = command.CreateParameter();
-                    param1.ParameterName = "@IdUser";
-                    param1.Value = idUser;
-                    command.Parameters.Add(param1);
-
-                    var paramOption = command.CreateParameter();
-                    paramOption.ParameterName = "@Option";
-                    paramOption.Value = "GetOptionsAssigned";
-                    command.Parameters.Add(paramOption); 
-
-                    var messageParam = command.CreateParameter();
-                    messageParam.ParameterName = "@Message";
-                    messageParam.DbType = System.Data.DbType.String;
-                    messageParam.Size = int.MaxValue;
-                    messageParam.Direction = System.Data.ParameterDirection.Output;
-                    command.Parameters.Add(messageParam);
-
-                    var operationExecutedParam = command.CreateParameter();
-                    operationExecutedParam.ParameterName = "@OperationExecuted";
-                    operationExecutedParam.DbType = System.Data.DbType.Boolean;
-                    operationExecutedParam.Direction = System.Data.ParameterDirection.Output;
-                    command.Parameters.Add(operationExecutedParam);
-
-                    using (var reader = await command.ExecuteReaderAsync())
+                    while (await result.ReadAsync())
                     {
-                        // Leer primer resultado (módulos)
-                        while (await reader.ReadAsync())
+                        var module = moduleDtos.FirstOrDefault(m => m.IdModule == (int)result["IdModule"]);
+                        if (module == null)
                         {
-                            modules.Add(new ModuleDTO
+                            module = new ModuleDTO
                             {
-                                IdModule = reader.GetInt32(0),
-                                NameModule = reader.GetString(1),
-                                Icon = reader.GetString(2),
-                                Color = reader.GetString(3)
-                            });
+                                IdModule = (int)result["IdModule"],
+                                NameModule = result["NameModule"]?.ToString(),
+                                Icon = result["IconModule"]?.ToString(),
+                                Color = result["ColorModule"]?.ToString(),
+                                Options = new List<OptionDTO>()
+                            };
+                            moduleDtos.Add(module);
                         }
 
-                        // Leer el siguiente conjunto de resultados (opciones)
-                        if (await reader.NextResultAsync())
+                        var option = new OptionDTO
                         {
-                            while (await reader.ReadAsync())
-                            {
-                                var module = modules.FirstOrDefault(m => m.IdModule == reader.GetInt32(0));
-                                if (module != null)
-                                {
-                                    module.Options.Add(new OptionDTO
-                                    {
-                                        IdOption = reader.GetInt32(1),
-                                        Icon = reader.GetString(2),
-                                        NameOption = reader.GetString(3),
-                                        Description = reader.GetString(4),
-                                        Controler = reader.GetString(5),
-                                        Action = reader.GetString(6),
-                                        OrderBy = reader.GetInt32(7),
-                                        UserAssigned = reader.GetString(8)
-                                    });
-                                }
-                            }
-                        }
+                            IdOption = (int)result["IdOption"],
+                            Icon = result["IconOption"]?.ToString(),
+                            NameOption = result["NameOption"]?.ToString(),
+                            Description = result["Description"]?.ToString(),
+                            Controler = result["Controler"]?.ToString(),
+                            Action = result["Action"]?.ToString(),
+                            OrderBy = (int)result["OrderBy"],
+                            UserAssigned = result["UserAssigned"]?.ToString()
+                        };
+
+                        module.Options.Add(option);
                     }
-
-                    operationExecuted = (bool)operationExecutedParam.Value;
-                    message = (string)messageParam.Value;
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error executing stored procedure: {ex.Message}");
-                throw;
-            }
-            finally
-            {
-                await conn.CloseAsync();
-                Console.WriteLine("Database connection closed.");
-            }
 
-            return (modules, message, operationExecuted);
+            string message = (string)messageParam.Value;
+            bool operationExecuted = (bool)operationExecutedParam.Value;
+
+            return (moduleDtos, message, operationExecuted);            
         }
 
     }

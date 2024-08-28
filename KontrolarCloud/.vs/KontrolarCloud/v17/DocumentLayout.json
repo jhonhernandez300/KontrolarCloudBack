@@ -7,11 +7,10 @@
       "RelativeMoniker": "D:0:0:{8D9A44D0-F83B-4654-A803-F3B084BAF064}|KontrolarCloud.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{76ABA5FE-6FEB-40E2-BC60-ECE31966F1D0}|..\\EF\\EF.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\ef\\utils\\jwt.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DC07AC64-B07B-42BD-A07F-8388BA976196}|..\\Core\\Core.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\core\\viewmodel\\moduledto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D9A44D0-F83B-4654-A803-F3B084BAF064}|KontrolarCloud.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\kontrolarcloud\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{8D9A44D0-F83B-4654-A803-F3B084BAF064}|KontrolarCloud.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{76ABA5FE-6FEB-40E2-BC60-ECE31966F1D0}|..\\EF\\EF.csproj|c:\\users\\jhon\\onedrive\\documentos\\kontrolarcloud\\back\\ef\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,24 +30,11 @@
               "RelativeDocumentMoniker": "Controllers\\UserController.cs",
               "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\KontrolarCloud\\Controllers\\UserController.cs",
               "RelativeToolTip": "Controllers\\UserController.cs",
-              "ViewState": "AQIAABAAAAAAAAAAAAApwEAAAAAAAAAA",
+              "ViewState": "AQIAADMBAAAAAAAAAAAAAEEBAABdAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-27T14:34:00.106Z",
               "IsPinned": true,
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\KontrolarCloud\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\KontrolarCloud\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-08-27T14:40:33.083Z",
-              "IsPinned": true
             },
             {
               "$type": "Bookmark",
@@ -57,14 +43,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Jwt.cs",
-              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Utils\\Jwt.cs",
-              "RelativeDocumentMoniker": "..\\EF\\Utils\\Jwt.cs",
-              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Utils\\Jwt.cs",
-              "RelativeToolTip": "..\\EF\\Utils\\Jwt.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Title": "ModuleDTO.cs",
+              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\ViewModel\\ModuleDTO.cs",
+              "RelativeDocumentMoniker": "..\\Core\\ViewModel\\ModuleDTO.cs",
+              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\Core\\ViewModel\\ModuleDTO.cs",
+              "RelativeToolTip": "..\\Core\\ViewModel\\ModuleDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-28T00:49:07.149Z",
+              "WhenOpened": "2024-08-28T21:49:50.558Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\UserRepository.cs",
+              "RelativeDocumentMoniker": "..\\EF\\Repositories\\UserRepository.cs",
+              "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\EF\\Repositories\\UserRepository.cs",
+              "RelativeToolTip": "..\\EF\\Repositories\\UserRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAGYAAAA8AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-28T19:34:36.931Z",
               "EditorCaption": ""
             }
           ]

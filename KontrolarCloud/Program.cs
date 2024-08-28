@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using AutoMapper;
 using KontrolarCloud.Mapping;
+using KontrolarCloud.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,6 +106,8 @@ app.UseRouting();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseCors("AllowOrigins");
+
+app.UseMiddleware<TokenValidationMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -857,6 +857,116 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par
+\b Crear un middleware personalizado q revise el token\par
+\b0\f1 public class TokenValidationMiddleware\par
+\{\par
+    private readonly RequestDelegate _next;\par
+    private readonly IConfiguration _configuration;\par
+\par
+    public TokenValidationMiddleware(RequestDelegate next, IConfiguration configuration)\par
+    \{\par
+        _next = next;\par
+        _configuration = configuration;\par
+    \}\par
+\par
+    public async Task InvokeAsync(HttpContext context)\par
+    \{\par
+        var endpoint = context.GetEndpoint();\par
+        if (endpoint != null)\par
+        \{\par
+            var allowAnonymous = endpoint.Metadata.GetMetadata<IAllowAnonymous>() != null;\par
+\par
+            if (!allowAnonymous)\par
+            \{\par
+                var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");\par
+\par
+                if (token != null)\par
+                \{\par
+                    var isValidToken = ValidateToken(token);\par
+\par
+                    if (!isValidToken)\par
+                    \{\par
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;\par
+                        await context.Response.WriteAsync("Invalid Token");\par
+                        return;\par
+                    \}\par
+                \}\par
+                else\par
+                \{\par
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;\par
+                    await context.Response.WriteAsync("Token is missing");\par
+                    return;\par
+                \}\par
+            \}\par
+        \}\par
+\par
+        await _next(context);\par
+    \}\par
+\par
+    private bool ValidateToken(string token)\par
+    \{\par
+        var cleaned = token.Replace("\\"", "");\par
+        // Verificar si es cadena Base64 v\f2\'e1lida\par
+        byte[] encryptedUserBytes;\par
+        try\par
+        \{\par
+            encryptedUserBytes = Convert.FromBase64String(cleaned);\par
+        \}\par
+        catch (FormatException)\par
+        \{\par
+            return false;\par
+        \}\par
+\par
+        var decryptedParam = CryptoHelper.Decrypt(cleaned);\par
+        var deserialized = JsonConvert.DeserializeObject(decryptedParam);\par
+\par
+        var tokenHandler = new JwtSecurityTokenHandler();\par
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);\par
+\par
+        try\par
+        \{\par
+            tokenHandler.ValidateToken(deserialized.ToString(), new TokenValidationParameters\par
+            \{\par
+                ValidateIssuerSigningKey = true,\par
+                IssuerSigningKey = new SymmetricSecurityKey(key),\par
+                ValidateIssuer = true,\par
+                ValidIssuer = _configuration["Jwt:Issuer"],\par
+                ValidateAudience = true,\par
+                ValidAudience = _configuration["Jwt:Audience"],\par
+                ValidateLifetime = true,\par
+                ClockSkew = TimeSpan.Zero\par
+            \}, out SecurityToken validatedToken);\par
+\par
+            return true;\par
+        \}\par
+        catch\par
+        \{\par
+            return false;\par
+        \}\par
+    \}\par
+\}\par
+\par
+Program.cs\par
+\f1 app.UseCors("AllowOrigins");\par
+\par
+app.UseMiddleware<TokenValidationMiddleware>();\par
+\par
+app.UseAuthentication();\par
+app.UseAuthorization();\par
+\par
+app.MapControllers();\par
+//app.MapFallbackToFile("/index.html");\par
+\par
+app.Use(async (context, next) =>\par
+\{\par
+    // Log de la solicitud\par
+    Console.WriteLine($"Request: \{context.Request.Method\} \{context.Request.Path\}");\par
+    await next.Invoke();\par
+\});\par
+\par
+\f2 En el controlador\par
+\f1 [AllowAnonymous]\par
+\f0\par
 \cf0\fs22\lang10\par
 \cf1\fs19\lang9226 /////////////////////////////\par
 \par

@@ -38,69 +38,12 @@ namespace KontrolarCloud.Controllers
             _context = context;
         }
 
-        public string IsValidToken(string encryptedToken)
-        {
-            var cleaned = encryptedToken.Replace("\"", "");
-            // Verificar si es cadena Base64 válida
-            byte[] encryptedUserBytes;
-            try
-            {
-                encryptedUserBytes = Convert.FromBase64String(cleaned);
-            }
-            catch (FormatException)
-            {
-                return "No es valida en Base64";
-            }
-
-            var decryptedParam = CryptoHelper.Decrypt(cleaned);
-            var deserialized = JsonConvert.DeserializeObject(decryptedParam);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
-
-            if (!tokenHandler.CanReadToken((string)deserialized))
-            {
-                return "Token not on JWT format";
-            }
-
-            try
-            {
-                tokenHandler.ValidateToken((string)deserialized, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidIssuer = _configuration["Jwt:Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = _configuration["Jwt:Audience"],
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-                
-                return "true";
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-        }
         
         [HttpPut("Update")]
         public IActionResult Update([FromBody] string encryptedUserDto)
         {
             try
             {
-                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");                
-                var messagetokenValid = IsValidToken(token);
-
-                if (messagetokenValid != "true")
-                {
-                    return Unauthorized(new
-                    {
-                        success = false,
-                        message = messagetokenValid
-                    });
-                }
 
                 if (encryptedUserDto == null)
                 {
@@ -396,6 +339,7 @@ namespace KontrolarCloud.Controllers
 
         [HttpGet]
         [Route("CreateToken/{encryptedIdentificationNumber}/{encryptedIdCompany}")]
+        [AllowAnonymous]
         //public dynamic CreateToken()
         public dynamic CreateToken(string encryptedIdentificationNumber, string encryptedIdCompany)
         {
@@ -447,6 +391,7 @@ namespace KontrolarCloud.Controllers
         }
 
         [HttpGet("GetCompaniesByIdentificationNumber/{encryptedIdentificationNumber}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCompaniesByIdentificationNumber(string encryptedIdentificationNumber)
         {
             try
