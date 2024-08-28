@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using KontrolarCloud.DTOs;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace KontrolarCloud.Controllers
@@ -37,31 +38,18 @@ namespace KontrolarCloud.Controllers
             _context = context;
         }
 
-        public bool IsValidToken(string token)
+        public string IsValidToken(string token)
         {
-            //if (string.IsNullOrEmpty(encryptedToken)) { return false; }
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+
+            if (!tokenHandler.CanReadToken(token))
+            {
+                return "Token not on JWT format";
+            }
 
             try
             {
-                //encryptedToken = Uri.UnescapeDataString(encryptedToken);
-
-                // Verificar si es cadena Base64 válida
-                //byte[] encryptedUserBytes;
-                //try
-                //{
-                //    encryptedUserBytes = Convert.FromBase64String(encryptedToken);
-                //}
-                //catch (FormatException)
-                //{
-                //    return false;
-                //}
-
-                //string decrypted = CryptoHelper.Decrypt(encryptedToken);
-                //string deserialized = (string)JsonConvert.DeserializeObject(decrypted);
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
-
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -73,43 +61,31 @@ namespace KontrolarCloud.Controllers
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
-
-                var jwtToken = (JwtSecurityToken)validatedToken;
-                var identity = new ClaimsIdentity(jwtToken.Claims);
-                bool valid = Jwt.CheckToken(identity, _context);
-
-                if (!valid)
-                {
-                    return false;
-                }
-
-                var iatClaim = identity.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Iat);
-                if (iatClaim != null)
-                {
-                    var tokenCreationTime = DateTime.Parse(iatClaim.Value);
-                    if (DateTime.UtcNow > tokenCreationTime.AddMinutes(20))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+                
+                return "true";
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                return ex.Message;
             }
         }
-
-
+        
         [HttpPut("Update")]
-        public IActionResult Update([FromBody] string encryptedUserDto)        
+        public IActionResult Update([FromBody] string encryptedUserDto)
         {
             try
             {
-                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");                
                 var tokenValid = IsValidToken(token);
+
+                if (tokenValid != "true")
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Token no valido"
+                    });
+                }
 
                 if (encryptedUserDto == null)
                 {
@@ -149,12 +125,12 @@ namespace KontrolarCloud.Controllers
                     {
                         success = false,
                         message = "No encontrado"
-                    });                    
+                    });
                 }
 
                 existingUser.IdentificationNumber = user.IdentificationNumber;
                 existingUser.Names = user.Names;
-                existingUser.Surnames = user.Surnames;                
+                existingUser.Surnames = user.Surnames;
 
                 _unitOfWork.Users.Update(existingUser);
                 _unitOfWork.Complete();
@@ -170,7 +146,8 @@ namespace KontrolarCloud.Controllers
                 return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
             }
         }
-                
+
+
         [HttpDelete("DeleteUser")]
         public async Task<IActionResult> DeleteUser([FromBody] string encryptedUserDto) 
         {
@@ -217,9 +194,7 @@ namespace KontrolarCloud.Controllers
                         message = "No encontrado"
                     });
                 }
-
-                //user.IdUser = 63;
-                //user.IdUser = (int)user.IdUser;
+                
                 //No funciona con el user q viene en la petición, por eso se puso el q él encuentra
                 _unitOfWork.Users.Delete(exists);
                 var result = await _unitOfWork.CompleteAsync();
@@ -404,7 +379,7 @@ namespace KontrolarCloud.Controllers
             }
         }
 
-        [HttpGet]  
+        [HttpGet]
         [Route("CreateToken/{encryptedIdentificationNumber}/{encryptedIdCompany}")]
         //public dynamic CreateToken()
         public dynamic CreateToken(string encryptedIdentificationNumber, string encryptedIdCompany)
@@ -448,7 +423,7 @@ namespace KontrolarCloud.Controllers
                 var tokenJson = JsonConvert.SerializeObject(response);
                 var encryptedToken = CryptoHelper.Encrypt(tokenJson);
 
-                return tokenJson;
+                return encryptedToken;
             }
             catch (Exception ex)
             {

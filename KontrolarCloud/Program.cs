@@ -106,6 +106,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseCors("AllowOrigins");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -118,6 +119,6 @@ app.Use(async (context, next) =>
     await next.Invoke();
 });
 
-//app.UseAuthorization();
+
 
 app.Run();
