@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Core;
+using Core.DTOs;
 using Core.Models;
 using Microsoft.AspNetCore.Cors;
 using Newtonsoft.Json;
 using EF;
 using AutoMapper;
-using KontrolarCloud.DTOs;
 using System.Threading.Tasks;
 using EF.Utils;
 using Microsoft.Data.SqlClient;
@@ -49,18 +49,18 @@ namespace KontrolarCloud.Controllers
                 var decryptedParam = CryptoHelper.Decrypt(encryptedIdProfile);
                 int idProfile = int.Parse(decryptedParam.Replace("\"", ""));
 
-                var optionsProfile = await _unitOfWork.Profiles.GetOptionsProfileByIdProfileAsync(idProfile);
-
-                return Ok(optionsProfile);
+                var result = await _unitOfWork.Profiles.GetOptionsProfileByIdProfileAsync(idProfile);
+                if (!result.Success)
+                {
+                    return StatusCode(500, $"Error: {result.ErrorMessage}");
+                }
+                return Ok(result.Data);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
             }
-        }
-
-        //var decryptedParam = Convert.ToInt32(1);
-        //var optionsProfile = await _unitOfWork.Profiles.GetOptionsProfile(decryptedParam);
+        }        
 
         [HttpPut("Update")]
         public IActionResult Update([FromBody] string encryptedProfileDto)

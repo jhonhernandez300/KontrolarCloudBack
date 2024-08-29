@@ -55,6 +55,11 @@ namespace KontrolarCloud.Middlewares
 
         private bool ValidateToken(string token)
         {
+            if (string.IsNullOrEmpty(token)) 
+            { 
+                return false;
+            }
+
             var cleaned = token.Replace("\"", "");
             // Verificar si es cadena Base64 válida
             byte[] encryptedUserBytes;

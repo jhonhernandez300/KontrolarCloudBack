@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Core.Models;
-using KontrolarCloud.DTOs;
+using Core.DTOs;
 using Core;
 using System.Data;
 
@@ -26,6 +26,7 @@ namespace KontrolarCloud.Mapping
                 .ForMember(dest => dest.Action, opt => opt.MapFrom(src => src["Action"]))
                 .ForMember(dest => dest.OrderBy, opt => opt.MapFrom(src => src["OrderBy"]))
                 .ForMember(dest => dest.UserAssigned, opt => opt.MapFrom(src => src["UserAssigned"]));
+
         }
     }
 }

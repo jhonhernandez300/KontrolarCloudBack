@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Core.Models;
-using KontrolarCloud.DTOs;
+using Core.DTOs;
 using Core;
 
 namespace KontrolarCloud.Mapping

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Core;
+using Core.DTOs;
 using Core.Models;
 using Microsoft.AspNetCore.Cors;
 using EF.Utils;
@@ -13,7 +14,6 @@ using System.Text;
 using EF;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using KontrolarCloud.DTOs;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
 
