@@ -29,6 +29,39 @@ namespace KontrolarCloud.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("GetOptionsProfile/{encryptedIdProfile}")]
+        public async Task<IActionResult> GetOptionsProfile(string encryptedIdProfile)
+        {
+            try
+            {
+                encryptedIdProfile = Uri.UnescapeDataString(encryptedIdProfile);
+
+                byte[] encryptedUserBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedIdProfile);
+                }
+                catch (FormatException)
+                {
+                    return BadRequest("No es válida en Base64");
+                }
+
+                var decryptedParam = CryptoHelper.Decrypt(encryptedIdProfile);
+                int idProfile = int.Parse(decryptedParam.Replace("\"", ""));
+
+                var optionsProfile = await _unitOfWork.Profiles.GetOptionsProfileByIdProfileAsync(idProfile);
+
+                return Ok(optionsProfile);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
+            }
+        }
+
+        //var decryptedParam = Convert.ToInt32(1);
+        //var optionsProfile = await _unitOfWork.Profiles.GetOptionsProfile(decryptedParam);
+
         [HttpPut("Update")]
         public IActionResult Update([FromBody] string encryptedProfileDto)
         {
