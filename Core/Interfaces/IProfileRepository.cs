@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using Core.DTOs;
 using Core.Models;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace Core.Interfaces
     public interface IProfileRepository : IBaseRepository<Profile>
     {
         Task<List<Profile>> GetProfilesByParam(string param);
-        Task<List<OptionProfileDTO>> GetOptionsProfileByIdProfileAsync(int idProfile);
+        Task<OperationResult<List<OptionProfileDTO>>> GetOptionsProfileByIdProfileAsync(int idProfile);
+        Task<OperationResult<bool>> SetOptionsProfileAsync(int idProfile, List<OptionProfileDTO> options);
     }
 }

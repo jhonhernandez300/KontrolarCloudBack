@@ -4,3 +4,15 @@ C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.Ass
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.AssemblyInfo.cs
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.csproj.CoreCompileInputs.cache
 C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.sourcelink.json
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\bin\Debug\net8.0\EF.deps.json
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\bin\Debug\net8.0\EF.runtimeconfig.json
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\bin\Debug\net8.0\EF.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\bin\Debug\net8.0\EF.pdb
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\bin\Debug\net8.0\Core.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\bin\Debug\net8.0\Core.pdb
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.csproj.Up2Date
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\refint\EF.dll
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.pdb
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\EF.genruntimeconfig.cache
+C:\Users\jhon\OneDrive\Documentos\KontrolarCloud\back\EF\obj\Debug\net8.0\ref\EF.dll

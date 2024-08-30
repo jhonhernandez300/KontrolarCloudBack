@@ -107,10 +107,10 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseCors("AllowOrigins");
 
-app.UseMiddleware<TokenValidationMiddleware>();
+//app.UseMiddleware<TokenValidationMiddleware>();
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.MapControllers();
 //app.MapFallbackToFile("/index.html");

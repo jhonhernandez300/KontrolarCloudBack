@@ -235,6 +235,21 @@ namespace KontrolarCloud.Controllers
             }
         }
 
+        [HttpPost("SetOptionsProfileAsync/{idProfile}")]
+        public async Task<IActionResult> SetOptionsProfileAsync(int idProfile, [FromBody] List<OptionProfileDTO> optionProfiles)
+        {
+            try
+            {
+                var userList = await _unitOfWork.Profiles.SetOptionsProfileAsync(idProfile, optionProfiles);
+                return Ok(userList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
+            }
+        }
+
+
         [HttpPost("AddAsync")]
         public async Task<IActionResult> AddAsync([FromBody] string encryptedProfile)
         {
@@ -310,6 +325,7 @@ namespace KontrolarCloud.Controllers
                 });
             }
         }
+
 
     }
 }
