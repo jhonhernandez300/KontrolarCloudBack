@@ -51,8 +51,7 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAF0AAAAwAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-29T18:33:52.24Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Document",
@@ -65,8 +64,7 @@
               "ViewState": "AQIAAN4AAAAAAAAAAABRwPIAAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-29T17:58:32.691Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Bookmark",
@@ -80,7 +78,7 @@
               "RelativeDocumentMoniker": "Middlewares\\TokenValidationMiddleware.cs",
               "ToolTip": "C:\\Users\\jhon\\OneDrive\\Documentos\\KontrolarCloud\\back\\KontrolarCloud\\Middlewares\\TokenValidationMiddleware.cs",
               "RelativeToolTip": "Middlewares\\TokenValidationMiddleware.cs",
-              "ViewState": "AQIAADMAAAAAAAAAAAAAAFcAAAA/AAAA",
+              "ViewState": "AQIAAC8AAAAAAAAAAAAkwFcAAAA/AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-30T19:51:43.837Z",
               "EditorCaption": ""
@@ -95,8 +93,7 @@
               "RelativeToolTip": "Controllers\\UserController.cs",
               "ViewState": "AQIAAGAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-30T19:51:06.294Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-30T19:51:06.294Z"
             },
             {
               "$type": "Document",
@@ -108,8 +105,7 @@
               "RelativeToolTip": "..\\Core\\Interfaces\\IProfileRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAABnAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-30T03:19:34.185Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-30T03:19:34.185Z"
             },
             {
               "$type": "Document",
@@ -121,8 +117,7 @@
               "RelativeToolTip": "..\\Core\\DTOs\\OptionProfileDTO.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAuAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-29T20:19:44.432Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-29T20:19:44.432Z"
             },
             {
               "$type": "Document",
@@ -134,8 +129,7 @@
               "RelativeToolTip": "..\\Core\\Models\\OperationResult.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-29T19:39:28.234Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-29T19:39:28.234Z"
             },
             {
               "$type": "Document",
@@ -147,8 +141,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AQIAAFcAAAAAAAAAAAAAAHAAAAAZAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-29T19:26:12.408Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-29T19:26:12.408Z"
             }
           ]
         }
