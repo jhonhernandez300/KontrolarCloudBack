@@ -56,7 +56,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
 builder.Services.AddScoped<IUserCompanyRepository, UserCompanyRepository>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
-builder.Services.AddScoped<ILastIdsKTRL2Repository, LastIdsKTRL2Repository>();
+builder.Services.AddScoped<ILastIdTableCompanyRepository, LastIdTableCompanyRepository>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -107,10 +107,10 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseCors("AllowOrigins");
 
-//app.UseMiddleware<TokenValidationMiddleware>();
+app.UseMiddleware<TokenValidationMiddleware>();
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 //app.MapFallbackToFile("/index.html");

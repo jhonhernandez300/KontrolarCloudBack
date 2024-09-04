@@ -80,8 +80,11 @@ namespace EF.Repositories
 
         public Task<List<Core.Models.Profile>> GetProfilesByParam(string param)
         {
+            int parsedParam;
+
             return _context.Profiles
-                    .Where(p => p.CodProfile.Contains(param) ||
+                    .Where(p => (int.TryParse(param, out parsedParam) && p.IdProfile == parsedParam) ||
+                            p.CodProfile.Contains(param) ||
                                 p.NameProfile.Contains(param) ||
                                 p.Description.Contains(param)).ToListAsync();
         }

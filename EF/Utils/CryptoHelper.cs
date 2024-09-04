@@ -63,5 +63,21 @@ namespace EF.Utils
                 }
             }
         }
+
+        public static bool IsBase64String(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return false;
+
+            try
+            {
+                Convert.FromBase64String(input);
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
     }
 }

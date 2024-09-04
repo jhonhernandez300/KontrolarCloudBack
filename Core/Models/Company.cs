@@ -17,6 +17,8 @@ namespace Core.Models
         public required string DB { get; set; }                
         public required DateTime LicenseValidDate { get; set; }
         public required int NumberSimiltaneousConnection { get; set; }
+        public required bool ApisActive { get; set; }
+        public required string AcessKey { get; set; }
 
         public ICollection<UserCompany> UserCompanies { get; set; } = new List<UserCompany>();
     }

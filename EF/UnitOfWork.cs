@@ -24,7 +24,7 @@ namespace EF
                           IOptionRepository options,
                           IProfileRepository profiles,
                           ILastIdsKTRL1Repository lastIdsKTRL1,
-                          ILastIdsKTRL2Repository lastIdsKTRL2,
+                          ILastIdTableCompanyRepository lastIdsKTRL2,
                           IUserCompanyRepository usersCompanies,
                           IUserProfileRepository usersProfiles)
                           
@@ -47,7 +47,7 @@ namespace EF
         public IUserRepository Users { get; private set; }
         public ICompanyRepository Companies { get; private set; }
         public ILastIdsKTRL1Repository LastIdsKTRL1 { get; private set; }
-        public ILastIdsKTRL2Repository LastIdsKTRL2 { get; private set; }
+        public ILastIdTableCompanyRepository LastIdsKTRL2 { get; private set; }
         public IModuleRepository Modules { get; private set; }
         public IOptionRepository Options { get; private set; }
         public IOptionProfileRepository OptionsProfiles { get; private set; }

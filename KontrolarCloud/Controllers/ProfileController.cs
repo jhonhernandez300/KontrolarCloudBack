@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using EF.Utils;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace KontrolarCloud.Controllers
 {
@@ -32,6 +33,10 @@ namespace KontrolarCloud.Controllers
         [HttpGet("GetOptionsProfile/{encryptedIdProfile}")]
         public async Task<IActionResult> GetOptionsProfile(string encryptedIdProfile)
         {
+            if (string.IsNullOrEmpty(encryptedIdProfile))
+            {
+                return BadRequest("ID de perfil nulo o vacío");
+            }
             try
             {
                 encryptedIdProfile = Uri.UnescapeDataString(encryptedIdProfile);
@@ -63,39 +68,40 @@ namespace KontrolarCloud.Controllers
         }        
 
         [HttpPut("Update")]
-        public IActionResult Update([FromBody] string encryptedProfileDto)
+        //public IActionResult Update([FromBody] string encryptedProfileDto)
+        public IActionResult Update([FromBody] ProfileDTO profileDto)
         {
             try
             {
-                if (encryptedProfileDto == null)
-                {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = "El perfil encriptado es nulo"
-                    });
-                }
+                //if (encryptedProfileDto == null)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        success = false,
+                //        message = "El perfil encriptado es nulo"
+                //    });
+                //}
 
-                encryptedProfileDto = Uri.UnescapeDataString(encryptedProfileDto);
+                //encryptedProfileDto = Uri.UnescapeDataString(encryptedProfileDto);
 
-                // Verificar si es cadena Base64 válida
-                byte[] encryptedUserBytes;
-                try
-                {
-                    encryptedUserBytes = Convert.FromBase64String(encryptedProfileDto);
-                }
-                catch (FormatException)
-                {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = "No es valida en Base64"
-                    });
-                }
+                //// Verificar si es cadena Base64 válida
+                //byte[] encryptedUserBytes;
+                //try
+                //{
+                //    encryptedUserBytes = Convert.FromBase64String(encryptedProfileDto);
+                //}
+                //catch (FormatException)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        success = false,
+                //        message = "No es valida en Base64"
+                //    });
+                //}
 
-                var decryptedParam = CryptoHelper.Decrypt(encryptedProfileDto);
-                var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedParam);
-                var profile = _mapper.Map<Core.Models.Profile>(deserialized);
+                //var decryptedParam = CryptoHelper.Decrypt(encryptedProfileDto);
+                //var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(profileDto);
+                var profile = _mapper.Map<Core.Models.Profile>(profileDto);
 
                 var existingProfile = _unitOfWork.Profiles.GetById(profile.IdProfile);
 
@@ -128,39 +134,40 @@ namespace KontrolarCloud.Controllers
         }
 
         [HttpDelete("DeleteProfile")]
-        public async Task<IActionResult> DeleteProfile([FromBody] string encryptedProfileDto)
+        //public async Task<IActionResult> DeleteProfile([FromBody] string encryptedProfileDto)
+        public async Task<IActionResult> DeleteProfile([FromBody] ProfileDTO profileDTO)
         {
             try
             {
-                if (encryptedProfileDto == null)
-                {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = "El profile encriptado es nulo"
-                    });
-                }
+                //if (encryptedProfileDto == null)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        success = false,
+                //        message = "El profile encriptado es nulo"
+                //    });
+                //}
 
-                encryptedProfileDto = Uri.UnescapeDataString(encryptedProfileDto);
+                //encryptedProfileDto = Uri.UnescapeDataString(encryptedProfileDto);
 
-                // Verificar si es cadena Base64 válida
-                byte[] encryptedUserBytes;
-                try
-                {
-                    encryptedUserBytes = Convert.FromBase64String(encryptedProfileDto);
-                }
-                catch (FormatException)
-                {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = "No es valida en Base64"
-                    });
-                }
+                //// Verificar si es cadena Base64 válida
+                //byte[] encryptedUserBytes;
+                //try
+                //{
+                //    encryptedUserBytes = Convert.FromBase64String(encryptedProfileDto);
+                //}
+                //catch (FormatException)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        success = false,
+                //        message = "No es valida en Base64"
+                //    });
+                //}
 
-                var decryptedParam = CryptoHelper.Decrypt(encryptedProfileDto);
-                var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedParam);
-                var profile = _mapper.Map<Core.Models.Profile>(deserialized);
+                //var decryptedParam = CryptoHelper.Decrypt(encryptedProfileDto);
+                //var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedParam);
+                var profile = _mapper.Map<Core.Models.Profile>(profileDTO);
 
                 var exists = _unitOfWork.Profiles.GetById(profile.IdProfile);
 
@@ -207,26 +214,29 @@ namespace KontrolarCloud.Controllers
             }
         }
 
-        [HttpGet("GetProfilesByParam/{encryptedParam}")]
-        public async Task<IActionResult> GetProfilesByParam(string encryptedParam)
+        //[HttpGet("GetProfilesByParam/{encryptedParam}")]
+        //public async Task<IActionResult> GetProfilesByParam(string encryptedParam)
+        [HttpGet("GetProfilesByParam/{param}")]
+        public async Task<IActionResult> GetProfilesByParam(string param)
         {
             try
             {
-                encryptedParam = Uri.UnescapeDataString(encryptedParam);
+                //encryptedParam = Uri.UnescapeDataString(encryptedParam);
 
-                // Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
-                byte[] encryptedUserBytes;
-                try
-                {
-                    encryptedUserBytes = Convert.FromBase64String(encryptedParam);
-                }
-                catch (FormatException)
-                {
-                    return BadRequest("No es valida en Base64");
-                }
+                //// Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
+                //byte[] encryptedUserBytes;
+                //try
+                //{
+                //    encryptedUserBytes = Convert.FromBase64String(encryptedParam);
+                //}
+                //catch (FormatException)
+                //{
+                //    return BadRequest("No es valida en Base64");
+                //}
 
-                var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
-                var userList = await _unitOfWork.Profiles.GetProfilesByParam(decryptedParam.Replace("\"", ""));
+                //var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
+                //var userList = await _unitOfWork.Profiles.GetProfilesByParam(decryptedParam.Replace("\"", ""));
+                var userList = await _unitOfWork.Profiles.GetProfilesByParam(param.Replace("\"", ""));
                 return Ok(userList);
             }
             catch (Exception ex)
@@ -249,32 +259,36 @@ namespace KontrolarCloud.Controllers
             }
         }
 
-
         [HttpPost("AddAsync")]
-        public async Task<IActionResult> AddAsync([FromBody] string encryptedProfile)
+        //public async Task<IActionResult> AddAsync([FromBody] string encryptedProfile)
+        public async Task<IActionResult> AddAsync([FromBody] ProfileDTO profileDto)
         {
+            //if (string.IsNullOrEmpty(encryptedProfile))
+            //{7
+            //    return BadRequest("Profile nulo o vacío");
+            //}
             try
             {
-                encryptedProfile = Uri.UnescapeDataString(encryptedProfile);
+                //encryptedProfile = Uri.UnescapeDataString(encryptedProfile);
 
-                // Verificar si encryptedProfile son cadenas Base64 válidas
-                byte[] encryptedProfileBytes;
-                try
-                {
-                    encryptedProfileBytes = Convert.FromBase64String(encryptedProfile);
-                }
-                catch (FormatException)
-                {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = "No es valida en Base64"
-                    });
-                }
+                //// Verificar si encryptedProfile son cadenas Base64 válidas
+                //byte[] encryptedProfileBytes;
+                //try
+                //{
+                //    encryptedProfileBytes = Convert.FromBase64String(encryptedProfile);
+                //}
+                //catch (FormatException)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        success = false,
+                //        message = "No es valida en Base64"
+                //    });
+                //}
 
-                var decryptedProfile = CryptoHelper.Decrypt(encryptedProfile);
-                var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedProfile);
-                var profile = _mapper.Map<Core.Models.Profile>(deserialized);
+                //var decryptedProfile = CryptoHelper.Decrypt(encryptedProfile);
+                //var deserialized = JsonConvert.DeserializeObject<ProfileDTO>(decryptedProfile);
+                var profile = _mapper.Map<Core.Models.Profile>(profileDto);
 
                 // Verificar si el CodProfile ya existe en la base de datos
                 var existing = await _unitOfWork.Profiles.FindAsync(u => u.CodProfile == profile.CodProfile);
@@ -325,7 +339,5 @@ namespace KontrolarCloud.Controllers
                 });
             }
         }
-
-
     }
 }

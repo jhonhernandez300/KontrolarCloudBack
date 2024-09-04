@@ -36,22 +36,21 @@ namespace KontrolarCloud.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _context = context;
-        }
+        }              
 
-        
         [HttpPut("Update")]
         public IActionResult Update([FromBody] string encryptedUserDto)
         {
             try
             {
-
-                if (encryptedUserDto == null)
+                if (string.IsNullOrWhiteSpace(encryptedUserDto))
                 {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = "El usuario encriptado es nulo"
-                    });
+                    return CreateErrorResponse.BadRequestResponse(
+                        code: "Null or white space",
+                        message: "encryptedUserDto is null or white space",
+                        parameters: new List<string> { "encryptedUserDto" },
+                        detail: "Check encryptedUserDto value"
+                    );
                 }
 
                 encryptedUserDto = Uri.UnescapeDataString(encryptedUserDto);
@@ -64,11 +63,12 @@ namespace KontrolarCloud.Controllers
                 }
                 catch (FormatException)
                 {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = "No es valida en Base64"
-                    });
+                    return CreateErrorResponse.BadRequestResponse(
+                      code: "Base64",
+                      message: "Parameter is not base 64",
+                      parameters: new List<string> { "encryptedUserDto" },
+                      detail: "Check encryptedUserDto format"
+                  );
                 }
 
                 var decryptedParam = CryptoHelper.Decrypt(encryptedUserDto);
@@ -79,11 +79,12 @@ namespace KontrolarCloud.Controllers
 
                 if (existingUser == null)
                 {
-                    return NotFound(new
-                    {
-                        success = false,
-                        message = "No encontrado"
-                    });
+                    return CreateErrorResponse.NotFoundResponse(
+                     code: "Not Found",
+                     message: "existingUser is not found",
+                     parameters: new List<string> { "existingUser" },
+                     detail: "Check existingUser value"
+                    );
                 }
 
                 existingUser.IdentificationNumber = user.IdentificationNumber;
@@ -93,18 +94,23 @@ namespace KontrolarCloud.Controllers
                 _unitOfWork.Users.Update(existingUser);
                 _unitOfWork.Complete();
 
-                return Ok(new
-                {
-                    success = true,
-                    message = "Registro actualizado con exito"
-                });
+                return CreateErrorResponse.OKResponse(
+                     code: "Success",
+                     message: "Successful operation",
+                     parameters: new List<string> { "User Update" },
+                     detail: "Check the database for the User's update action"
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
+                return CreateErrorResponse.InternalServerErrorResponse(
+                     code: "Internal Server Error",
+                     message: ex.Message,
+                     parameters: new List<string> { "existingUser" },
+                     detail: "Check existingUser updated"
+                );
             }
         }
-
 
         [HttpDelete("DeleteUser")]
         public async Task<IActionResult> DeleteUser([FromBody] string encryptedUserDto) 
@@ -337,58 +343,137 @@ namespace KontrolarCloud.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("CreateToken/{encryptedIdentificationNumber}/{encryptedIdCompany}")]
+        [HttpPost("CreateToken")]
         [AllowAnonymous]
-        //public dynamic CreateToken()
-        public dynamic CreateToken(string encryptedIdentificationNumber, string encryptedIdCompany)
+        public async Task<IActionResult> CreateToken([FromBody] LoginRequestDTOs loginRequestDTO)
         {
-            var IdentificationNumber = CryptoHelper.Decrypt(encryptedIdentificationNumber);
-            IdentificationNumber = StringHelper.EliminateFirstAndLast(IdentificationNumber);
-
-            var idCompany = CryptoHelper.Decrypt(encryptedIdCompany);
-            idCompany = StringHelper.EliminateFirstAndLast(idCompany);
-
             try
             {
-                var jwt = _configuration.GetSection("Jwt")
-                    .Get<Jwt>();
-
-                var claims = new[]
+                if(loginRequestDTO == null || string.IsNullOrWhiteSpace(loginRequestDTO.IdentificationNumber) ||
+                    string.IsNullOrWhiteSpace(loginRequestDTO.Company)
+                )
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim("idCompany", idCompany),
-                    new Claim("IdentificationNumber", IdentificationNumber)
-                };
+                    return CreateErrorResponse.BadRequestResponse(
+                        code: "Null or white space",
+                        message: "loginRequestDTO is null or white space",
+                        parameters: new List<string> { "loginRequestDTO" },
+                        detail: "Check loginRequestDTO value"
+                    );
+                }
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
-                var singIng = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                string idCompany, identificationNumber;
+                
+                if (loginRequestDTO.IsKontrolarCloud == true)
+                {                  
+                    (idCompany, identificationNumber) = DecryptAndCleanLoginData(loginRequestDTO);
+                    var accessKey = CryptoHelper.Decrypt(loginRequestDTO.AccessKey);
 
-                var token = new JwtSecurityToken(
-                        jwt.Issuer,
-                        jwt.Audience,
-                        claims,
-                        expires: DateTime.Now.AddMinutes(20),
-                        signingCredentials: singIng
-                );
+                    if (!await IsAuthorizedUser(idCompany, identificationNumber, accessKey))
+                    {
+                        return Unauthorized("Not authorized");
+                    }
+                }
+                else                
+                {
+                    var accessKey = CryptoHelper.Decrypt(loginRequestDTO.AccessKey);
 
-                var response = new JwtSecurityTokenHandler().WriteToken(token);
+                    if (string.IsNullOrWhiteSpace(accessKey))                    
+                    {
+                        return BadRequest("Login data cannot be null or empty.");
+                    }
+                    (idCompany, identificationNumber) = ExtractLoginData(loginRequestDTO);
 
-                byte[] bytesToEncode = Encoding.UTF8.GetBytes(response);
-                string encodedString = Convert.ToBase64String(bytesToEncode);
+                    if (!await IsAuthorizedCompany(idCompany, identificationNumber, loginRequestDTO, accessKey))
+                    {
+                        return Unauthorized("Not authorized");
+                    }
+                }
 
-                var tokenJson = JsonConvert.SerializeObject(response);
-                var encryptedToken = CryptoHelper.Encrypt(tokenJson);
+                var token = GenerateJwtToken(idCompany, identificationNumber);
+                var encryptedToken = EncryptToken(token);
 
-                return encryptedToken;
+                return Ok(encryptedToken);
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return BadRequest(ex.Message);
             }
         }
+
+        private (string idCompany, string identificationNumber) DecryptAndCleanLoginData(LoginRequestDTOs loginRequestDTO)
+        {
+            string identificationNumber = CryptoHelper.Decrypt(loginRequestDTO.IdentificationNumber);
+            identificationNumber = StringHelper.EliminateFirstAndLast(identificationNumber);
+
+            string idCompany = CryptoHelper.Decrypt(loginRequestDTO.Company);
+            idCompany = StringHelper.EliminateFirstAndLast(idCompany);
+
+            return (idCompany, identificationNumber);
+        }
+
+        private async Task<bool> IsAuthorizedUser(string idCompany, string identificationNumber, string encryptedPassword)
+        {
+            var password = StringHelper.EliminateFirstAndLast(CryptoHelper.Decrypt(encryptedPassword));
+            var (companies_UserCompanies, _, _) = await _unitOfWork.Companies.GetCompaniesByIdentificationNumber(identificationNumber);
+
+            return companies_UserCompanies.Any(x => x.IdCompany == Convert.ToInt32(idCompany) && x.Password == password);
+        }
+
+        private (string idCompany, string identificationNumber) ExtractLoginData(LoginRequestDTOs loginRequestDTO)
+        {
+            return (loginRequestDTO.Company, loginRequestDTO.IdentificationNumber);
+        }
+
+        private async Task<bool> IsAuthorizedCompany(string idCompany, string identificationNumber, LoginRequestDTOs loginRequestDTO, string key)
+        {
+            var (companies_UserCompanies, _, _) = await _unitOfWork.Companies.GetCompaniesByIdentificationNumber(identificationNumber);
+            if (!companies_UserCompanies.Any(x => x.IdCompany == Convert.ToInt32(idCompany)))
+            {
+                return false;
+            }
+
+            var company = await _unitOfWork.Companies.GetByIdAsync(Convert.ToInt32(idCompany));
+            if (company == null || company.AcessKey != key || !company.ApisActive || company.LicenseValidDate < DateTime.Now)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private string GenerateJwtToken(string idCompany, string identificationNumber)
+        {
+            var jwt = _configuration.GetSection("Jwt").Get<Jwt>();
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                new Claim("idCompany", idCompany),
+                new Claim("IdentificationNumber", identificationNumber)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+            var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                jwt.Issuer,
+                jwt.Audience,
+                claims,
+                expires: DateTime.Now.AddMinutes(20),
+                signingCredentials: signingCredentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private string EncryptToken(string token)
+        {
+            var tokenJson = JsonConvert.SerializeObject(token);
+            return CryptoHelper.Encrypt(tokenJson);
+        }
+
 
         [HttpGet("GetCompaniesByIdentificationNumber/{encryptedIdentificationNumber}")]
         [AllowAnonymous]
@@ -418,6 +503,7 @@ namespace KontrolarCloud.Controllers
                     return NotFound(message);
                 }
 
+                companies_UserCompanies.ForEach(x => x.Password = "");
                 var userCompaniesJson = JsonConvert.SerializeObject(companies_UserCompanies);
                 var encryptedData = CryptoHelper.Encrypt(userCompaniesJson);
 
