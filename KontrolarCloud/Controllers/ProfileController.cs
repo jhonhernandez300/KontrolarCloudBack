@@ -35,7 +35,12 @@ namespace KontrolarCloud.Controllers
         {
             if (string.IsNullOrEmpty(encryptedIdProfile))
             {
-                return BadRequest("ID de perfil nulo o vacío");
+                return CreateErrorResponse.BadRequestResponse(
+                    code: "Null or white space",
+                    message: "encryptedIdProfile is null or white space",
+                    parameters: new List<string> { "encryptedIdProfile" },
+                    detail: "Check encryptedIdProfile value"
+                );
             }
             try
             {
@@ -48,7 +53,12 @@ namespace KontrolarCloud.Controllers
                 }
                 catch (FormatException)
                 {
-                    return BadRequest("No es válida en Base64");
+                    return CreateErrorResponse.BadRequestResponse(
+                        code: "Base64",
+                        message: "Parameter is not base 64",
+                        parameters: new List<string> { "encryptedIdProfile" },
+                        detail: "Check encryptedIdProfile format"
+                    );
                 }
 
                 var decryptedParam = CryptoHelper.Decrypt(encryptedIdProfile);
@@ -57,13 +67,28 @@ namespace KontrolarCloud.Controllers
                 var result = await _unitOfWork.Profiles.GetOptionsProfileByIdProfileAsync(idProfile);
                 if (!result.Success)
                 {
-                    return StatusCode(500, $"Error: {result.ErrorMessage}");
+                    return CreateErrorResponse.NotFoundResponse(
+                         code: "Not Found",
+                         message: "Options for the profile not found",
+                         parameters: new List<string> { "idProfile" },
+                         detail: "Check idProfile value"
+                        );
                 }
-                return Ok(result.Data);
+                return CreateErrorResponse.OKResponse(
+                     code: "Success",
+                     message: "Successful operation",
+                     parameters: new List<string> { "idProfile" },
+                     detail: "Options for the profile obtained"
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
+                return CreateErrorResponse.InternalServerErrorResponse(
+                     code: "Internal Server Error",
+                     message: ex.Message,
+                     parameters: new List<string> { "idProfile" },
+                     detail: "Check idProfile value"
+                );
             }
         }        
 
@@ -75,16 +100,17 @@ namespace KontrolarCloud.Controllers
             {
                 //if (encryptedProfileDto == null)
                 //{
-                //    return BadRequest(new
-                //    {
-                //        success = false,
-                //        message = "El perfil encriptado es nulo"
-                //    });
+                //    return CreateErrorResponse.BadRequestResponse(
+                //        code: "Null or white space",
+                //        message: "encryptedProfileDto is null or white space",
+                //        parameters: new List<string> { "encryptedProfileDto" },
+                //        detail: "Check encryptedProfileDto value"
+                //    );
                 //}
 
                 //encryptedProfileDto = Uri.UnescapeDataString(encryptedProfileDto);
 
-                //// Verificar si es cadena Base64 válida
+                // Verificar si es cadena Base64 válida
                 //byte[] encryptedUserBytes;
                 //try
                 //{
@@ -92,11 +118,12 @@ namespace KontrolarCloud.Controllers
                 //}
                 //catch (FormatException)
                 //{
-                //    return BadRequest(new
-                //    {
-                //        success = false,
-                //        message = "No es valida en Base64"
-                //    });
+                //    return CreateErrorResponse.BadRequestResponse(
+                //        code: "Base64",
+                //        message: "Parameter is not base 64",
+                //        parameters: new List<string> { "encryptedProfileDto" },
+                //        detail: "Check encryptedProfileDto format"
+                //    );
                 //}
 
                 //var decryptedParam = CryptoHelper.Decrypt(encryptedProfileDto);
@@ -107,11 +134,12 @@ namespace KontrolarCloud.Controllers
 
                 if (existingProfile == null)
                 {
-                    return NotFound(new
-                    {
-                        success = false,
-                        message = "No encontrado"
-                    });
+                    return CreateErrorResponse.NotFoundResponse(
+                         code: "Not Found",
+                         message: "profile.IdProfile is not found",
+                         parameters: new List<string> { "profile.IdProfile" },
+                         detail: "Check profile.IdProfile value"
+                        );
                 }
 
                 existingProfile.CodProfile = profile.CodProfile;
@@ -121,15 +149,21 @@ namespace KontrolarCloud.Controllers
                 _unitOfWork.Profiles.Update(existingProfile);
                 _unitOfWork.Complete();
 
-                return Ok(new
-                {
-                    success = true,
-                    message = "Registro actualizado con exito"
-                });
+                return CreateErrorResponse.OKResponse(
+                     code: "Success",
+                     message: "Successful operation",
+                     parameters: new List<string> { "deserialized" },
+                     detail: "Profile updated"
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, Json($"Error interno del servidor: {ex.Message}"));
+                return CreateErrorResponse.InternalServerErrorResponse(
+                     code: "Internal Server Error",
+                     message: ex.Message,
+                     parameters: new List<string> { "deserialized" },
+                     detail: "Check deserialized value"
+                );
             }
         }
 

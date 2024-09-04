@@ -90,5 +90,45 @@ namespace EF.Utils
             return new ObjectResult(errorResponse) { StatusCode = status };
         }
 
+        public static IActionResult ConflictErrorResponse(string code, string message, List<string> parameters, string detail, int status = 409)
+        {
+            var errorResponse = new ErrorResponse
+            {
+                Status = status,
+                Results = new List<ErrorDetail>
+                {
+                    new ErrorDetail
+                    {
+                        Code = code,
+                        Message = message,
+                        Params = parameters,
+                        Detail = detail
+                    }
+                }
+            };
+
+            return new ObjectResult(errorResponse) { StatusCode = status };
+        }
+
+        public static IActionResult UnauthorizedErrorResponse(string code, string message, List<string> parameters, string detail, int status = 401)
+        {
+            var errorResponse = new ErrorResponse
+            {
+                Status = status,
+                Results = new List<ErrorDetail>
+                {
+                    new ErrorDetail
+                    {
+                        Code = code,
+                        Message = message,
+                        Params = parameters,
+                        Detail = detail
+                    }
+                }
+            };
+
+            return new ObjectResult(errorResponse) { StatusCode = status };
+        }
+
     }
 }
