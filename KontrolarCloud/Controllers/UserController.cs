@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 
 namespace KontrolarCloud.Controllers
@@ -409,7 +410,7 @@ namespace KontrolarCloud.Controllers
             {
                 if(loginRequestDTO == null 
                     || string.IsNullOrWhiteSpace(loginRequestDTO.IdentificationNumber) 
-                    || string.IsNullOrWhiteSpace(loginRequestDTO.Company)
+                    || string.IsNullOrWhiteSpace(loginRequestDTO.IdCompany)
                     || string.IsNullOrWhiteSpace(loginRequestDTO.AccessKey)
                 )
                 {
@@ -460,26 +461,78 @@ namespace KontrolarCloud.Controllers
                             detail: "Check accessKey value"
                         );
                     }
-                    (idCompany, identificationNumber) = ExtractLoginData(loginRequestDTO);
 
-                    if (!await IsAuthorizedCompany(idCompany, identificationNumber, loginRequestDTO, accessKey))
+                    var user = await _unitOfWork.Users.FindAsync(u => u.IdentificationNumber == loginRequestDTO.IdentificationNumber);
+                    if (user == null)
                     {
-                        return CreateErrorResponse.UnauthorizedErrorResponse(
-                            code: "Unauthorized",
-                            message: "Unauthorized with this parameters",
-                            parameters: new List<string> { "idCompany, identificationNumber, loginRequestDTO, accessKey" },
-                            detail: "Check idCompany, identificationNumber, loginRequestDTO, accessKey values"
+                        return CreateErrorResponse.NotFoundResponse(
+                            code: "UserNotFound",
+                            message: "User not found with the provided identification number",
+                            parameters: new List<string> { "loginRequestDTO.IdentificationNumber" },
+                            detail: "Check identification number value"
                         );
                     }
+
+                    var company = await _unitOfWork.Companies.GetByIdAsync(Convert.ToInt32(loginRequestDTO.IdCompany));
+                    if (company == null)
+                    {
+                        return CreateErrorResponse.BadRequestResponse(
+                            code: "Null or white space",
+                            message: "company is null or white space",
+                            parameters: new List<string> { "company" },
+                            detail: "Check company value"
+                        );
+                    }
+
+                    var (companies_UserCompanies, _, _) = await _unitOfWork.Companies.GetCompaniesByIdentificationNumber(loginRequestDTO.IdentificationNumber);
+                    if (!companies_UserCompanies.Any(x => x.IdCompany == Convert.ToInt32(loginRequestDTO.IdCompany)))
+                    {
+                        return CreateErrorResponse.NotFoundResponse(
+                         code: "Not Found",
+                         message: "That IdCompany is not found on the list of companies for this User",
+                         parameters: new List<string> { "IdCompany" },
+                         detail: "Check IdCompany value"
+                        );
+                    }
+                   
+                    if (company.AcessKey != accessKey)
+                    {
+                        return CreateErrorResponse.BadRequestResponse(
+                            code: "Wrong Value",
+                            message: "accessKey is not correct",
+                            parameters: new List<string> { "accessKey" },
+                            detail: "Check accessKey value"
+                        );
+                    }
+                    
+                    if (!company.ApisActive) 
+                    {
+                        return CreateErrorResponse.InternalServerErrorResponse(
+                             code: "Internal Server Error",
+                             message: "apisActive is not activated",
+                             parameters: new List<string> { "company.ApisActive" },
+                             detail: "Check company.ApisActive value"
+                        );
+                    }
+                    
+                    if (company.LicenseValidDate < DateTime.Now)
+                    {
+                        return CreateErrorResponse.InternalServerErrorResponse(
+                             code: "Internal Server Error",
+                             message: "Licence expired",
+                             parameters: new List<string> { "company.LicenseValidDate" },
+                             detail: "Check company.LicenseValidDate value"
+                        );
+                    }                    
                 }
 
-                var token = GenerateJwtToken(idCompany, identificationNumber);
+                var token = GenerateJwtToken(loginRequestDTO.IdCompany, loginRequestDTO.IdentificationNumber);
                 var encryptedToken = EncryptToken(token);
 
                 return CreateErrorResponse.OKResponse(
                      code: "Success",
                      message: "Successful operation",
-                     parameters: new List<string> { "token" },
+                     parameters: new List<string> { encryptedToken },
                      detail: "Token generated"
                 );
             }
@@ -499,7 +552,7 @@ namespace KontrolarCloud.Controllers
             string identificationNumber = CryptoHelper.Decrypt(loginRequestDTO.IdentificationNumber);
             identificationNumber = StringHelper.EliminateFirstAndLast(identificationNumber);
 
-            string idCompany = CryptoHelper.Decrypt(loginRequestDTO.Company);
+            string idCompany = CryptoHelper.Decrypt(loginRequestDTO.IdCompany);
             idCompany = StringHelper.EliminateFirstAndLast(idCompany);
 
             return (idCompany, identificationNumber);
@@ -515,25 +568,8 @@ namespace KontrolarCloud.Controllers
 
         private (string idCompany, string identificationNumber) ExtractLoginData(LoginRequestDTOs loginRequestDTO)
         {
-            return (loginRequestDTO.Company, loginRequestDTO.IdentificationNumber);
-        }
-
-        private async Task<bool> IsAuthorizedCompany(string idCompany, string identificationNumber, LoginRequestDTOs loginRequestDTO, string key)
-        {
-            var (companies_UserCompanies, _, _) = await _unitOfWork.Companies.GetCompaniesByIdentificationNumber(identificationNumber);
-            if (!companies_UserCompanies.Any(x => x.IdCompany == Convert.ToInt32(idCompany)))
-            {
-                return false;
-            }
-
-            var company = await _unitOfWork.Companies.GetByIdAsync(Convert.ToInt32(idCompany));
-            if (company == null || company.AcessKey != key || !company.ApisActive || company.LicenseValidDate < DateTime.Now)
-            {
-                return false;
-            }
-
-            return true;
-        }
+            return (loginRequestDTO.IdCompany, loginRequestDTO.IdentificationNumber);
+        }        
 
         private string GenerateJwtToken(string idCompany, string identificationNumber)
         {
@@ -568,9 +604,9 @@ namespace KontrolarCloud.Controllers
             return CryptoHelper.Encrypt(tokenJson);
         }
 
-        [HttpGet("GetCompaniesByIdentificationNumber/{encryptedIdentificationNumber}")]
+        [HttpGet("GetCompaniesAssigned/{encryptedIdentificationNumber}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetCompaniesByIdentificationNumber(string encryptedIdentificationNumber)
+        public async Task<IActionResult> GetCompaniesAssigned(string encryptedIdentificationNumber)
         {
             try
             {

@@ -30,6 +30,61 @@ namespace KontrolarCloud.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("GetProfilesByParam/{encryptedParam}")]
+        public async Task<IActionResult> GetProfilesByParam(string encryptedParam)
+        //[HttpGet("GetProfilesByParam/{param}")]
+        //public async Task<IActionResult> GetProfilesByParam(string param)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(encryptedParam))
+                {
+                    return CreateErrorResponse.BadRequestResponse(
+                        code: "Null or white space",
+                        message: "param is null or white space",
+                        parameters: new List<string> { "param" },
+                        detail: "Check param value"
+                    );
+                }
+                encryptedParam = Uri.UnescapeDataString(encryptedParam);
+
+                // Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
+                byte[] encryptedUserBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedParam);
+                }
+                catch (FormatException)
+                {
+                    return CreateErrorResponse.BadRequestResponse(
+                        code: "Base64",
+                        message: "encryptedParam is not base 64",
+                        parameters: new List<string> { "encryptedParam" },
+                        detail: "Check encryptedParam format"
+                    );
+                }
+
+                var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
+                var userList = await _unitOfWork.Profiles.GetProfilesByParam(decryptedParam.Replace("\"", ""));
+                //var userList = await _unitOfWork.Profiles.GetProfilesByParam(param.Replace("\"", ""));
+                return CreateErrorResponse.OKResponse(
+                     code: "Success",
+                     message: "Successful operation",
+                     parameters: new List<string> { "userList" },
+                     detail: "Profile obtained"
+                );
+            }
+            catch (Exception ex)
+            {
+                return CreateErrorResponse.InternalServerErrorResponse(
+                     code: "Internal Server Error",
+                     message: ex.Message,
+                     parameters: new List<string> { "userList" },
+                     detail: "Check GetProfilesByParam"
+                );
+            }
+        }
+
         [HttpGet("GetOptionsProfile/{encryptedIdProfile}")]
         public async Task<IActionResult> GetOptionsProfile(string encryptedIdProfile)
         {
@@ -92,7 +147,7 @@ namespace KontrolarCloud.Controllers
             }
         }        
 
-        [HttpPut("Update")]
+        [HttpPut("UpdateProfile")]
         //public IActionResult Update([FromBody] string encryptedProfileDto)
         public IActionResult Update([FromBody] ProfileDTO profileDto)
         {
@@ -246,41 +301,10 @@ namespace KontrolarCloud.Controllers
                 Console.WriteLine($"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
                 return StatusCode(500, $"Internal server error: {ex.Message} - StackTrace: {ex.StackTrace}");
             }
-        }
+        }        
 
-        //[HttpGet("GetProfilesByParam/{encryptedParam}")]
-        //public async Task<IActionResult> GetProfilesByParam(string encryptedParam)
-        [HttpGet("GetProfilesByParam/{param}")]
-        public async Task<IActionResult> GetProfilesByParam(string param)
-        {
-            try
-            {
-                //encryptedParam = Uri.UnescapeDataString(encryptedParam);
-
-                //// Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
-                //byte[] encryptedUserBytes;
-                //try
-                //{
-                //    encryptedUserBytes = Convert.FromBase64String(encryptedParam);
-                //}
-                //catch (FormatException)
-                //{
-                //    return BadRequest("No es valida en Base64");
-                //}
-
-                //var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
-                //var userList = await _unitOfWork.Profiles.GetProfilesByParam(decryptedParam.Replace("\"", ""));
-                var userList = await _unitOfWork.Profiles.GetProfilesByParam(param.Replace("\"", ""));
-                return Ok(userList);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error interno del servidor: {ex.Message} - StackTrace: {ex.StackTrace}");
-            }
-        }
-
-        [HttpPost("SetOptionsProfileAsync/{idProfile}")]
-        public async Task<IActionResult> SetOptionsProfileAsync(int idProfile, [FromBody] List<OptionProfileDTO> optionProfiles)
+        [HttpPost("SetOptionsProfile/{idProfile}")]
+        public async Task<IActionResult> SetOptionsProfile(int idProfile, [FromBody] List<OptionProfileDTO> optionProfiles)
         {
             try
             {
@@ -293,9 +317,9 @@ namespace KontrolarCloud.Controllers
             }
         }
 
-        [HttpPost("AddAsync")]
-        //public async Task<IActionResult> AddAsync([FromBody] string encryptedProfile)
-        public async Task<IActionResult> AddAsync([FromBody] ProfileDTO profileDto)
+        [HttpPost("CreateProfile")]
+        //public async Task<IActionResult> CreateProfile([FromBody] string encryptedProfile)
+        public async Task<IActionResult> CreateProfile([FromBody] ProfileDTO profileDto)
         {
             //if (string.IsNullOrEmpty(encryptedProfile))
             //{7
@@ -313,11 +337,12 @@ namespace KontrolarCloud.Controllers
                 //}
                 //catch (FormatException)
                 //{
-                //    return BadRequest(new
-                //    {
-                //        success = false,
-                //        message = "No es valida en Base64"
-                //    });
+                //    return CreateErrorResponse.BadRequestResponse(
+                //      code: "Base64",
+                //      message: "Parameter is not base 64",
+                //      parameters: new List<string> { "encryptedProfile" },
+                //      detail: "Check encryptedProfile format"
+                //    );
                 //}
 
                 //var decryptedProfile = CryptoHelper.Decrypt(encryptedProfile);
@@ -328,11 +353,12 @@ namespace KontrolarCloud.Controllers
                 var existing = await _unitOfWork.Profiles.FindAsync(u => u.CodProfile == profile.CodProfile);
                 if (existing != null)
                 {
-                    return StatusCode(500, new
-                    {
-                        success = false,
-                        message = "Ya existe ese Código de Perfil"
-                    });
+                    return CreateErrorResponse.InternalServerErrorResponse(
+                         code: "Internal Server Error",
+                         message: "Parameter already exists",
+                         parameters: new List<string> { "profile.CodProfile" },
+                         detail: "Check Profiles.FindAsync"
+                    );
                 }
 
                 // Consultar el último ID usado para la tabla Profile
@@ -340,11 +366,12 @@ namespace KontrolarCloud.Controllers
 
                 if (lastIdRecord == null)
                 {
-                    return StatusCode(500, new
-                    {
-                        success = false,
-                        message = "Last (id) no encontrado"
-                    });
+                    return CreateErrorResponse.InternalServerErrorResponse(
+                         code: "Internal Server Error",
+                         message: "Las id not found",
+                         parameters: new List<string> { "LastIdsKTRL2.GetBiggerAsync(\"MT_Profiles\")" },
+                         detail: "Check LastIdsKTRL2.GetBiggerAsync(\"MT_Profiles\")"
+                    );
                 }
 
                 long newUserId = lastIdRecord.Last + 1;
@@ -357,20 +384,22 @@ namespace KontrolarCloud.Controllers
                 lastIdRecord.Last = newUserId;
                 _unitOfWork.LastIdsKTRL2.Update(lastIdRecord);
                 _unitOfWork.Complete();
-                
-                return Ok(new
-                {
-                    success = true,
-                    message = "Registro agregado con exito"                    
-                });
+
+                return CreateErrorResponse.OKResponse(
+                     code: "Success",
+                     message: "Successful operation",
+                     parameters: new List<string> { "profile" },
+                     detail: "Profile added"
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = $"Error interno del servidor {ex.Message}"
-                });
+                return CreateErrorResponse.InternalServerErrorResponse(
+                     code: "Internal Server Error",
+                     message: ex.Message,
+                     parameters: new List<string> { "existingUser" },
+                     detail: "Check existingUser value"
+                );
             }
         }
     }

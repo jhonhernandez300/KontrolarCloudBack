@@ -12,5 +12,6 @@ namespace Core.Interfaces
     {
         Task<(List<ModuleDTO> moduleOptionDTOs, string message, bool operationExecuted)> ProfileGetOptions(int idUser);
         Task<List<User>> GetUsersByParam(string param);
+        Task<User> GetByIdAsync(string id);
     }
 }

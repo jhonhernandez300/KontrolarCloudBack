@@ -24,6 +24,11 @@ namespace EF.Repositories
             _secondaryContext = secondaryContext;
         }
 
+        public async Task<User> GetByIdAsync(string id)
+        {
+            return await _context.Users.FindAsync(id);
+        }
+
         public Task<List<User>> GetUsersByParam(string param)
         {
             return _context.Users
