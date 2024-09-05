@@ -11,7 +11,10 @@ namespace Core.Interfaces
 {
     public interface IProfileRepository : IBaseRepository<Profile>
     {
-        Task<List<Profile>> GetProfilesByParam(string param);
+        Task<Profile> GetProfileById(int idProfile);
+        Task<Core.Models.Profile?> GetProfileByCod(string idProfile);
+        Task<List<Profile>> GetListProfiles(string param);
+        //Task<List<Profile>> GetProfileByCod(string param);
         Task<OperationResult<List<OptionProfileDTO>>> GetOptionsProfileByIdProfileAsync(int idProfile);
         Task<OperationResult<bool>> SetOptionsProfileAsync(int idProfile, List<OptionProfileDTO> options);
     }

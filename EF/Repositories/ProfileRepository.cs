@@ -30,6 +30,55 @@ namespace EF.Repositories
             _mapper = mapper;
         }
 
+        //public async Task<OperationResult<List<ProfileDTO>>> GetProfileById(int idProfile)
+        //{
+        //    var result = new OperationResult<List<ProfileDTO>>();
+
+        //    try
+        //    {
+        //        var profiles = new List<ProfileDTO>();
+
+        //        var command = _context.Database.GetDbConnection().CreateCommand();
+        //        command.CommandText = "SP_AdminProfiles";
+        //        command.CommandType = CommandType.StoredProcedure;
+
+        //        command.Parameters.Add(new SqlParameter("@Option", SqlDbType.NVarChar) { Value = "GetOptionsProfile" });
+        //        command.Parameters.Add(new SqlParameter("@IdProfile", SqlDbType.Int) { Value = idProfile });
+
+        //        await _context.Database.OpenConnectionAsync();
+
+        //        using (var reader = await command.ExecuteReaderAsync())
+        //        {
+        //            while (await reader.ReadAsync())
+        //            {
+        //                var profileDTO = new ProfileDTO
+        //                {
+        //                    IdProfile = reader.GetInt32(reader.GetOrdinal("IdProfile")),
+        //                    CodProfile = reader.GetString(reader.GetOrdinal("CodProfile")),
+        //                    NameProfile = reader.GetString(reader.GetOrdinal("NameProfile")),
+        //                    Description = reader.GetString(reader.GetOrdinal("Description"))
+        //                };
+
+        //                profiles.Add(profileDTO);
+        //            }
+        //        }
+
+        //        result.Data = profiles;
+        //        result.Success = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.Success = false;
+        //        result.ErrorMessage = ex.Message;
+        //    }
+        //    finally
+        //    {
+        //        await _context.Database.CloseConnectionAsync();
+        //    }
+
+        //    return result;
+        //}
+
         public async Task<OperationResult<List<OptionProfileDTO>>> GetOptionsProfileByIdProfileAsync(int idProfile)
         {
             var result = new OperationResult<List<OptionProfileDTO>>();
@@ -78,15 +127,33 @@ namespace EF.Repositories
             return result;
         }
 
-        public Task<List<Core.Models.Profile>> GetProfilesByParam(string param)
-        {
-            int parsedParam;
 
-            return _context.Profiles
-                    .Where(p => (int.TryParse(param, out parsedParam) && p.IdProfile == parsedParam) ||
-                            p.CodProfile.Contains(param) ||
-                                p.NameProfile.Contains(param) ||
-                                p.Description.Contains(param)).ToListAsync();
+
+        public async Task<List<Core.Models.Profile>> GetListProfiles(string param)
+        {
+            var profiles = await _context.Profiles
+                .FromSqlInterpolated($"EXEC SP_AdminProfiles @Option = 'GetListProfiles', @SearchListBycoincidence = {param}")
+                .ToListAsync();
+
+            return profiles;
+        }
+
+        public async Task<Core.Models.Profile?> GetProfileById(int idProfile)
+        {
+            var profiles = await _context.Profiles
+                .FromSqlInterpolated($"EXEC SP_AdminProfiles @Option = 'GetProfileById', @IdProfile = {idProfile}")
+                .ToListAsync();
+
+            return profiles.FirstOrDefault();
+        }
+
+        public async Task<Core.Models.Profile?> GetProfileByCod(string idProfile)
+        {
+            var profiles = await _context.Profiles
+                .FromSqlInterpolated($"EXEC SP_AdminProfiles @Option = 'GetProfileByCod', @CodProfile = {idProfile}")
+                .ToListAsync();
+
+            return profiles.FirstOrDefault();
         }
 
         public async Task<OperationResult<bool>> SetOptionsProfileAsync(int idProfile, List<OptionProfileDTO> options)

@@ -532,7 +532,11 @@ namespace KontrolarCloud.Controllers
                 return CreateErrorResponse.OKResponse(
                      code: "Success",
                      message: "Successful operation",
-                     parameters: new List<string> { encryptedToken },
+                     parameters: new LoginResponseDTOs()
+                     {
+                         Token = encryptedToken,
+                         ExpirationDate = DateTime.Now.AddMinutes(20),
+                     },
                      detail: "Token generated"
                 );
             }

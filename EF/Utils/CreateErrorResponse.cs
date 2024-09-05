@@ -50,7 +50,7 @@ namespace EF.Utils
             return new ObjectResult(errorResponse) { StatusCode = status };
         }
 
-        public static IActionResult OKResponse(string code, string message, List<string> parameters, string detail, int status = 200)
+        public static IActionResult OKResponse(string code, string message, object parameters, string detail, int status = 200)
         {
             var errorResponse = new ErrorResponse
             {

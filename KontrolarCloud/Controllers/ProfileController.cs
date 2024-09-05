@@ -11,6 +11,7 @@ using EF.Utils;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KontrolarCloud.Controllers
 {
@@ -28,6 +29,110 @@ namespace KontrolarCloud.Controllers
             _configuration = configuration;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+        }
+
+        [HttpGet("GetProfileById/{encryptedParam}")]
+        public async Task<IActionResult> GetProfileById(string encryptedParam)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(encryptedParam))
+                {
+                    return CreateErrorResponse.BadRequestResponse(
+                        code: "Null or white space",
+                        message: "param is null or white space",
+                        parameters: new List<string> { "param" },
+                        detail: "Check param value"
+                    );
+                }
+                encryptedParam = Uri.UnescapeDataString(encryptedParam);
+
+                // Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
+                byte[] encryptedUserBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedParam);
+                }
+                catch (FormatException)
+                {
+                    return CreateErrorResponse.BadRequestResponse(
+                        code: "Base64",
+                        message: "encryptedParam is not base 64",
+                        parameters: new List<string> { "encryptedParam" },
+                        detail: "Check encryptedParam format"
+                    );
+                }
+
+                var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
+                var userList = await _unitOfWork.Profiles.GetProfileById(Convert.ToInt32(decryptedParam.Replace("\"", "")));
+                return CreateErrorResponse.OKResponse(
+                     code: "Success",
+                     message: "Successful operation",
+                     parameters: userList,
+                     detail: "Profile obtained"
+                );
+            }
+            catch (Exception ex)
+            {
+                return CreateErrorResponse.InternalServerErrorResponse(
+                     code: "Internal Server Error",
+                     message: ex.Message,
+                     parameters: new List<string> { "userList" },
+                     detail: "Check GetProfileById"
+                );
+            }
+        }
+
+        [HttpGet("GetProfileByCod/{encryptedParam}")]
+        public async Task<IActionResult> GetProfileByCod(string encryptedParam)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(encryptedParam))
+                {
+                    return CreateErrorResponse.BadRequestResponse(
+                        code: "Null or white space",
+                        message: "param is null or white space",
+                        parameters: new List<string> { "param" },
+                        detail: "Check param value"
+                    );
+                }
+                encryptedParam = Uri.UnescapeDataString(encryptedParam);
+
+                // Verificar si encryptedIdUser y encryptedIdProfile son cadenas Base64 válidas
+                byte[] encryptedUserBytes;
+                try
+                {
+                    encryptedUserBytes = Convert.FromBase64String(encryptedParam);
+                }
+                catch (FormatException)
+                {
+                    return CreateErrorResponse.BadRequestResponse(
+                        code: "Base64",
+                        message: "encryptedParam is not base 64",
+                        parameters: new List<string> { "encryptedParam" },
+                        detail: "Check encryptedParam format"
+                    );
+                }
+
+                var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
+                var userList = await _unitOfWork.Profiles.GetProfileByCod(decryptedParam.Replace("\"", ""));
+                return CreateErrorResponse.OKResponse(
+                     code: "Success",
+                     message: "Successful operation",
+                     parameters: userList,
+                     detail: "Profile obtained"
+                );
+            }
+            catch (Exception ex)
+            {
+                return CreateErrorResponse.InternalServerErrorResponse(
+                     code: "Internal Server Error",
+                     message: ex.Message,
+                     parameters: new List<string> { "userList" },
+                     detail: "Check GetProfileById"
+                );
+            }
         }
 
         [HttpGet("GetProfilesByParam/{encryptedParam}")]
@@ -65,12 +170,12 @@ namespace KontrolarCloud.Controllers
                 }
 
                 var decryptedParam = CryptoHelper.Decrypt(encryptedParam);
-                var userList = await _unitOfWork.Profiles.GetProfilesByParam(decryptedParam.Replace("\"", ""));
+                var userList = await _unitOfWork.Profiles.GetListProfiles(decryptedParam.Replace("\"", ""));
                 //var userList = await _unitOfWork.Profiles.GetProfilesByParam(param.Replace("\"", ""));
                 return CreateErrorResponse.OKResponse(
                      code: "Success",
                      message: "Successful operation",
-                     parameters: new List<string> { "userList" },
+                     parameters: userList,
                      detail: "Profile obtained"
                 );
             }
@@ -84,6 +189,7 @@ namespace KontrolarCloud.Controllers
                 );
             }
         }
+
 
         [HttpGet("GetOptionsProfile/{encryptedIdProfile}")]
         public async Task<IActionResult> GetOptionsProfile(string encryptedIdProfile)
@@ -132,7 +238,7 @@ namespace KontrolarCloud.Controllers
                 return CreateErrorResponse.OKResponse(
                      code: "Success",
                      message: "Successful operation",
-                     parameters: new List<string> { "idProfile" },
+                     parameters: result,
                      detail: "Options for the profile obtained"
                 );
             }

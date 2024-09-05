@@ -10,7 +10,7 @@ namespace Core.Models
     {
         public required string Code { get; set; }
         public required string Message { get; set; }
-        public required List<string> Params { get; set; }
+        public required object Params { get; set; }
         public required string Detail { get; set; }
     }
 }
